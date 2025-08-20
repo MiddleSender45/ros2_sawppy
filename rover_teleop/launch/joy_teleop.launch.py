@@ -31,6 +31,7 @@ def generate_launch_description():
     joy_config = launch.substitutions.LaunchConfiguration("joy_config")
     joy_dev = launch.substitutions.LaunchConfiguration("joy_dev")
     config_filepath = launch.substitutions.LaunchConfiguration("config_filepath")
+    ros_discovery_server = launch.substitutions.LaunchConfiguration("ros_discovery_server")
 
     return launch.LaunchDescription(
         [
@@ -50,6 +51,12 @@ def generate_launch_description():
                     launch.substitutions.TextSubstitution(text=".yaml"),
                 ],
             ),
+            launch.actions.DeclareLaunchArgument(
+                "ros_discovery_server",
+                default_value="131.194.112.46:11811",
+                description="Value for ROS_DISCOVERY_SERVER to inject into teleop nodes",
+            ),
+            # environment applied to all nodes launched here
             launch_ros.actions.Node(
                 package="joy_linux",
                 executable="joy_linux_node",
@@ -61,12 +68,20 @@ def generate_launch_description():
                         "autorepeat_rate": 0.0,
                     }
                 ],
+                additional_env={
+                    'RMW_IMPLEMENTATION': 'rmw_fastrtps_cpp',
+                    'ROS_DISCOVERY_SERVER': ros_discovery_server,
+                },
             ),
             launch_ros.actions.Node(
                 package="teleop_twist_joy",
                 executable="teleop_node",
                 name="teleop_twist_joy_node",
                 parameters=[config_filepath],
+                additional_env={
+                    'RMW_IMPLEMENTATION': 'rmw_fastrtps_cpp',
+                    'ROS_DISCOVERY_SERVER': ros_discovery_server,
+                },
             ),
         ]
     )

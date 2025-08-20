@@ -20,28 +20,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# This launch file brings up the Kinect sensor and the necessary nodes for the rover.
-# It optionally spins up a discovery server, which can be useful if you want to 
-# control the robot from a station on another subnet.
+# This launch file is intended to be used on a different computer that the raspberry pi
+# that is controlling Sawppy.  It may be on a different subnet - if so, you need the 
+# discovery server running somewhere (I set it up to run on the pi)
 
 import os
 from launch import LaunchDescription
-from launch.actions import SetEnvironmentVariable, IncludeLaunchDescription, DeclareLaunchArgument, ExecuteProcess
+from launch.actions import SetEnvironmentVariable, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import PushRosNamespace
+from launch.substitutions import LaunchConfiguration
+from launch.actions import DeclareLaunchArgument
 from launch_ros.actions import Node
+from launch import conditions
+from launch.actions import ExecuteProcess
 
 
 def generate_launch_description():
-    kinect_pkg_share = get_package_share_directory("kinect_ros2")
-    rover_bringup_shared_dir = get_package_share_directory("rover_bringup")
-    rover_motor_controller_shared_dir = get_package_share_directory(
-        "rover_motor_controller_cpp"
-    )
     rover_teleop_shared_dir = get_package_share_directory("rover_teleop")
-
     stdout_linebuf_envvar = SetEnvironmentVariable(
         "RCUTILS_LOGGING_USE_STDOUT", "1"
     )
@@ -49,24 +46,21 @@ def generate_launch_description():
         "RCUTILS_LOGGING_BUFFERED_STREAM", "1"
     )
 
-    # Enable control to cross subnets
-    discovery_server_envvar = SetEnvironmentVariable(name="ROS_DISCOVERY_SERVER", value='131.194.112.46:11811')
-    rmw_implementation_envvar = SetEnvironmentVariable(name="RMW_IMPLEMENTATION", value='rmw_fastrtps_cpp')
+    # discovery server launch arg and environment
+    ros_discovery_server_arg = DeclareLaunchArgument(
+        "ros_discovery_server",
+        default_value="131.194.112.46:11811",
+        description="Value for ROS_DISCOVERY_SERVER to inject into teleop nodes",
+    )
+    ros_discovery_server = LaunchConfiguration("ros_discovery_server")
+
+    rmw_envvar = SetEnvironmentVariable(name="RMW_IMPLEMENTATION", value="rmw_fastrtps_cpp")
+    discovery_server_envvar = SetEnvironmentVariable(name="ROS_DISCOVERY_SERVER", value=ros_discovery_server)
+
 
     #
     # LAUNCHES
     #
-    launch_discovery_server = ExecuteProcess(
-            cmd=['fastdds', 'discovery', '-i','0', '-l', '0.0.0.0', '-p', '11811'],
-                 name='fastdds_discovery_server',
-                 output='screen'
-         )
-
-    kinect_node_action_cmd = Node(
-                package="kinect_ros2",
-                executable="kinect_ros2_node",
-                namespace="kinect",
-            )
 
     teleop_twist_joy_action_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -74,23 +68,18 @@ def generate_launch_description():
         )
     )
 
-    rover_motor_controller_action_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                rover_motor_controller_shared_dir, "launch", "motor_controller.launch.py"
-            )
-        )
-    )
-
     ld = LaunchDescription()
-    ld.add_action(discovery_server_envvar)
-    ld.add_action(rmw_implementation_envvar)
+
     ld.add_action(stdout_linebuf_envvar)
     ld.add_action(stdout_linebuf2_envvar)
-    ld.add_action(launch_discovery_server)
-    ld.add_action(kinect_node_action_cmd)
-    ld.add_action(teleop_twist_joy_action_cmd)
-    ld.add_action(rover_motor_controller_action_cmd)
+    ld.add_action(ros_discovery_server_arg)
+    ld.add_action(rmw_envvar)
+    ld.add_action(discovery_server_envvar)
 
+    # The included launch descriptions already have conditions attached
+    # (conditions.IfCondition on the substitutions). Add them to the
+    # launch description unconditionally and let the launch system
+    # evaluate the conditions at runtime.
+    ld.add_action(teleop_twist_joy_action_cmd)
 
     return ld

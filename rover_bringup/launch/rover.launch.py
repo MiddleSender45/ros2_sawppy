@@ -27,6 +27,11 @@ from launch.actions import SetEnvironmentVariable, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import PushRosNamespace
+from launch.substitutions import LaunchConfiguration
+from launch.actions import DeclareLaunchArgument
+from launch_ros.actions import Node
+from launch import conditions
+from launch.actions import ExecuteProcess
 
 
 def generate_launch_description():
@@ -37,12 +42,24 @@ def generate_launch_description():
     rover_teleop_shared_dir = get_package_share_directory("rover_teleop")
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
-        "RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED", "1"
+        "RCUTILS_LOGGING_USE_STDOUT", "1"
     )
+    stdout_linebuf2_envvar = SetEnvironmentVariable(
+        "RCUTILS_LOGGING_BUFFERED_STREAM", "1"
+    )
+
 
     #
     # LAUNCHES
     #
+
+    # LIDAR 
+    use_lidar_arg = DeclareLaunchArgument(
+        "use_lidar",
+        default_value="false",
+        description="Whether to launch the urg_node (LIDAR driver)"
+    )
+    use_lidar = LaunchConfiguration("use_lidar")
 
     urg_node_action_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -53,7 +70,42 @@ def generate_launch_description():
                 rover_bringup_shared_dir, "config", "urg_node_serial.yaml"
             )
         }.items(),
+    condition=conditions.IfCondition(use_lidar)
     )
+
+    # Kinect
+    use_kinect_arg = DeclareLaunchArgument(
+        "use_kinect",
+        default_value="true",
+        description="Whether to launch the Kinect node"
+    )
+    use_kinect = LaunchConfiguration("use_kinect")
+
+    # Discovery server
+    discovery_server_arg = DeclareLaunchArgument(
+        "discovery_server",
+        default_value="true",
+        description="Whether to launch a local FastDDS discovery server"
+    )
+    discovery_server = LaunchConfiguration("discovery_server")
+
+
+    kinect_pkg_share = get_package_share_directory("kinect_ros2")
+    kinect_node_action_cmd = Node(
+        package="kinect_ros2",
+        executable="kinect_ros2_node",
+        namespace="kinect",
+        condition=conditions.IfCondition(use_kinect)
+    )
+
+
+    launch_discovery_server = ExecuteProcess(
+        cmd=["fastdds", "discovery", "-i", "0", "-l", "0.0.0.0", "-p", "11811"],
+        name="fastdds_discovery_server",
+        condition=conditions.IfCondition(discovery_server),
+        output="screen",
+    )
+
 
     teleop_twist_joy_action_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -72,9 +124,21 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     ld.add_action(stdout_linebuf_envvar)
+    ld.add_action(stdout_linebuf2_envvar)
 
+    # Declare launch arguments so configurations exist at runtime
+    ld.add_action(use_lidar_arg)
+    ld.add_action(use_kinect_arg)
+    ld.add_action(discovery_server_arg)
+
+    # The included launch descriptions already have conditions attached
+    # (conditions.IfCondition on the substitutions). Add them to the
+    # launch description unconditionally and let the launch system
+    # evaluate the conditions at runtime.
     ld.add_action(urg_node_action_cmd)
+    ld.add_action(kinect_node_action_cmd)
     ld.add_action(teleop_twist_joy_action_cmd)
     ld.add_action(rover_motor_controller_action_cmd)
+    ld.add_action(launch_discovery_server)
 
     return ld
