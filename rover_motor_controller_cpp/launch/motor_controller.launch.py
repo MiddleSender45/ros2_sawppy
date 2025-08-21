@@ -82,6 +82,22 @@ def generate_launch_description():
         description="baud rate",
     )
 
+
+    ros_discovery_server = LaunchConfiguration("ros_discovery_server")
+    declare_ros_discovery_server_cmd = DeclareLaunchArgument(
+        "ros_discovery_server",
+        default_value="127.0.0.1:11811",
+        description="ROS discovery server address",
+    )
+
+
+    rmw_implementation = SetEnvironmentVariable(
+        "RMW_IMPLEMENTATION", "rmw_fastrtps_cpp"
+    )
+    ros_discovery_server_envvar = SetEnvironmentVariable(
+        "ROS_DISCOVERY_SERVER", ros_discovery_server
+    )
+
     #
     # NODES
     #
@@ -98,6 +114,11 @@ def generate_launch_description():
                 "speed_factor": speed_factor,
             }
         ],
+        # Pass environment variables to the node
+        additional_env={
+            "RMW_IMPLEMENTATION": "rmw_fastrtps_cpp",
+            "ROS_DISCOVERY_SERVER": ros_discovery_server,
+        },
     )
 
     controller_node_cmd = Node(
@@ -107,6 +128,10 @@ def generate_launch_description():
         parameters=[
             {"motor_controller_device": motor_controller_device, "baud_rate": baud_rate}
         ],
+        additional_env={
+            "RMW_IMPLEMENTATION": "rmw_fastrtps_cpp",
+            "ROS_DISCOVERY_SERVER": ros_discovery_server,
+        },
     )
 
     ld = LaunchDescription()

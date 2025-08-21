@@ -53,7 +53,7 @@ def generate_launch_description():
             ),
             launch.actions.DeclareLaunchArgument(
                 "ros_discovery_server",
-                default_value="131.194.112.46:11811",
+                default_value="127.0.0.1:11811",
                 description="Value for ROS_DISCOVERY_SERVER to inject into teleop nodes",
             ),
             # environment applied to all nodes launched here
