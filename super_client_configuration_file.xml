@@ -11,7 +11,8 @@
                                  <metatrafficUnicastLocatorList>
                                      <locator>
                                          <udpv4>
-                                             <address>127.0.0.1</address>
+                                             <address>127.0.0.1</address> <!-- LocalHost -->
+                                             <address>131.194.112.46</address> <!-- Set to the IP of your pi running the discovery server -->
                                              <port>11811</port>
                                          </udpv4>
                                      </locator>

@@ -49,7 +49,7 @@ def generate_launch_description():
     # discovery server launch arg and environment
     ros_discovery_server_arg = DeclareLaunchArgument(
         "ros_discovery_server",
-        default_value="127.0.0.1:11811",
+        default_value="131.194.112.46:11811",
         description="Value for ROS_DISCOVERY_SERVER to inject into teleop nodes",
     )
     ros_discovery_server = LaunchConfiguration("ros_discovery_server")
@@ -65,7 +65,10 @@ def generate_launch_description():
     teleop_twist_joy_action_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(rover_teleop_shared_dir, "launch", "joy_teleop.launch.py")
-        )
+        ),
+        launch_arguments={
+            "ros_discovery_server": ros_discovery_server
+        }.items(),
     )
 
     ld = LaunchDescription()
