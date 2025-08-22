@@ -23,12 +23,10 @@ jobs:
         sudo apt update
         sudo apt install -y \
           python3-colcon-common-extensions \
-          clang-format \
-          clang-tidy \
-          ament-clang-format \
-          ament-clang-tidy \
-          ament-lint-auto \
-          ament-lint-cmake
+          python3-pytest-cov \
+          ros-jazzy-ament-lint \
+          ros-jazzy-ament-lint-auto \
+          ros-jazzy-ament-lint-common
 
 
     - name: Source ROS 2
