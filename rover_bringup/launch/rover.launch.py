@@ -36,38 +36,40 @@ from launch.actions import ExecuteProcess
 
 def generate_launch_description():
     rover_bringup_shared_dir = get_package_share_directory("rover_bringup")
-    rover_motor_controller_shared_dir = get_package_share_directory("rover_motor_controller_cpp")
+    rover_motor_controller_shared_dir = get_package_share_directory(
+        "rover_motor_controller_cpp"
+    )
     rover_teleop_shared_dir = get_package_share_directory("rover_teleop")
 
     stdout_linebuf_envvar = SetEnvironmentVariable("RCUTILS_LOGGING_USE_STDOUT", "1")
-    stdout_linebuf2_envvar = SetEnvironmentVariable("RCUTILS_LOGGING_BUFFERED_STREAM", "1")
+    stdout_linebuf2_envvar = SetEnvironmentVariable(
+        "RCUTILS_LOGGING_BUFFERED_STREAM", "1"
+    )
 
     #
     # LAUNCHES
     #
 
-    
-
     # Discovery server
     discovery_server_arg = DeclareLaunchArgument(
         "use_discovery_server",
         default_value="true",
-        description="Whether to launch a local FastDDS discovery server"
+        description="Whether to launch a local FastDDS discovery server",
     )
     use_discovery_server = LaunchConfiguration("use_discovery_server")
 
     ros_discovery_server_addr_arg = DeclareLaunchArgument(
-                "ros_discovery_server_addr",
-                default_value="127.0.0.1:11811",
-                description="Value for ROS_DISCOVERY_SERVER to inject into nodes",
-            )
+        "ros_discovery_server_addr",
+        default_value="127.0.0.1:11811",
+        description="Value for ROS_DISCOVERY_SERVER to inject into nodes",
+    )
     ros_discovery_server_addr = LaunchConfiguration("ros_discovery_server_addr")
 
-    # LIDAR 
+    # LIDAR
     use_lidar_arg = DeclareLaunchArgument(
         "use_lidar",
         default_value="false",
-        description="Whether to launch the urg_node (LIDAR driver)"
+        description="Whether to launch the urg_node (LIDAR driver)",
     )
     use_lidar = LaunchConfiguration("use_lidar")
 
@@ -80,17 +82,16 @@ def generate_launch_description():
                 rover_bringup_shared_dir, "config", "urg_node_serial.yaml"
             )
         }.items(),
-    condition=conditions.IfCondition(use_lidar)
+        condition=conditions.IfCondition(use_lidar),
     )
 
     # Kinect
     use_kinect_arg = DeclareLaunchArgument(
         "use_kinect",
         default_value="true",
-        description="Whether to launch the Kinect node"
+        description="Whether to launch the Kinect node",
     )
     use_kinect = LaunchConfiguration("use_kinect")
-
 
     kinect_pkg_share = get_package_share_directory("kinect_ros2")
     kinect_node_action_cmd = Node(
@@ -99,10 +100,10 @@ def generate_launch_description():
         namespace="kinect",
         condition=conditions.IfCondition(use_kinect),
         additional_env={
-            'RMW_IMPLEMENTATION': 'rmw_fastrtps_cpp',
-            'ROS_DISCOVERY_SERVER': ros_discovery_server_addr}
+            "RMW_IMPLEMENTATION": "rmw_fastrtps_cpp",
+            "ROS_DISCOVERY_SERVER": ros_discovery_server_addr,
+        },
     )
-
 
     launch_discovery_server = ExecuteProcess(
         cmd=["fastdds", "discovery", "-i", "0", "-l", "0.0.0.0", "-p", "11811"],
@@ -111,16 +112,12 @@ def generate_launch_description():
         output="screen",
     )
 
-
     teleop_twist_joy_action_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(rover_teleop_shared_dir, "launch", "joy_teleop.launch.py")
         ),
-        launch_arguments={
-                "ros_discovery_server": ros_discovery_server_addr
-        }.items(),
+        launch_arguments={"ros_discovery_server": ros_discovery_server_addr}.items(),
     )
-
 
     rover_motor_controller_action_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -128,9 +125,7 @@ def generate_launch_description():
                 rover_motor_controller_shared_dir, "launch", "motor_controller.launch.py"
             )
         ),
-        launch_arguments={
-            "ros_discovery_server": ros_discovery_server_addr
-        }.items(),
+        launch_arguments={"ros_discovery_server": ros_discovery_server_addr}.items(),
     )
 
     ld = LaunchDescription()
