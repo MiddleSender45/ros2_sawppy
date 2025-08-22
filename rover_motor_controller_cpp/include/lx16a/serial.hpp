@@ -26,7 +26,8 @@
 #include <memory>
 
 #include <boost/asio.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
+using namespace boost::placeholders;
 #include <boost/system/system_error.hpp>
 
 namespace lx16a {

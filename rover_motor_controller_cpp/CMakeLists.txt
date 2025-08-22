@@ -34,6 +34,10 @@ set(CONTROLLER_NODE_SOURCES
   src/motor_controller/controller_node.cpp
 )
 add_executable(controller_node ${CONTROLLER_NODE_SOURCES})
+target_include_directories(controller_node PRIVATE
+  include/lx16a
+  include/motor_controller
+)
 target_link_libraries(controller_node pthread boost_system)
 ament_target_dependencies(controller_node rclcpp rover_msgs)
 
