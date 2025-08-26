@@ -35,7 +35,7 @@ def generate_launch_description():
 
     return launch.LaunchDescription(
         [
-            launch.actions.DeclareLaunchArgument("joy_config", default_value="ps3"),
+            launch.actions.DeclareLaunchArgument("joy_config", default_value="f310"),
             launch.actions.DeclareLaunchArgument(
                 "joy_dev", default_value="/dev/input/js0"
             ),

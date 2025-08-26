@@ -39,8 +39,10 @@ def generate_launch_description():
     rover_motor_controller_shared_dir = get_package_share_directory("rover_motor_controller_cpp")
     rover_teleop_shared_dir = get_package_share_directory("rover_teleop")
 
-    stdout_linebuf_envvar = SetEnvironmentVariable("RCUTILS_LOGGING_USE_STDOUT", "1")
-    stdout_linebuf2_envvar = SetEnvironmentVariable("RCUTILS_LOGGING_BUFFERED_STREAM", "1")
+    env1 = SetEnvironmentVariable("RCUTILS_LOGGING_USE_STDOUT", "1")
+    env2 = SetEnvironmentVariable("RCUTILS_LOGGING_BUFFERED_STREAM", "1")
+    env3 = SetEnvironmentVariable("ROS_DISCOVERY_SERVER", "127.0.0.1:11811")
+    env4 = SetEnvironmentVariable("RMW_MIDDLEWARE", "rmw_fastrtps_cpp")
 
     #
     # LAUNCHES
@@ -98,9 +100,6 @@ def generate_launch_description():
         executable="kinect_ros2_node",
         namespace="kinect",
         condition=conditions.IfCondition(use_kinect),
-        additional_env={
-            'RMW_IMPLEMENTATION': 'rmw_fastrtps_cpp',
-            'ROS_DISCOVERY_SERVER': ros_discovery_server_addr}
     )
 
 
@@ -135,8 +134,11 @@ def generate_launch_description():
 
     ld = LaunchDescription()
 
-    ld.add_action(stdout_linebuf_envvar)
-    ld.add_action(stdout_linebuf2_envvar)
+    # Set up environment
+    ld.add_action(env1)
+    ld.add_action(env2)
+    ld.add_action(env3)
+    ld.add_action(env4)
 
     # Declare launch arguments so configurations exist at runtime
     ld.add_action(use_lidar_arg)
