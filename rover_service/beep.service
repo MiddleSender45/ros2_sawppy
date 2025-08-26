@@ -1,6 +1,7 @@
 [Unit]
 Description=Beep on boot
-After=multi-user.target
+Requires=rover.service
+After=rover.service
 
 [Service]
 Type=oneshot
