@@ -68,10 +68,10 @@ constexpr uint8_t SERVO_ERROR_LOCKED_ROTOR = 4;
 // SERVO IDs
 constexpr uint8_t MOTOR_LEFT_FRONT = 25; // drive motors
 constexpr uint8_t MOTOR_LEFT_MIDDLE = 21;
-constexpr uint8_t MOTOR_LEFT_BACK = 28;
+constexpr uint8_t MOTOR_LEFT_BACK = 20;
 constexpr uint8_t MOTOR_RIGHT_FRONT = 27;
 constexpr uint8_t MOTOR_RIGHT_MIDDLE = 22;
-constexpr uint8_t MOTOR_RIGHT_BACK = 20;
+constexpr uint8_t MOTOR_RIGHT_BACK = 28;
 
 constexpr uint8_t SERVO_LEFT_FRONT = 23; // steering motors
 constexpr uint8_t SERVO_RIGHT_FRONT = 29;
