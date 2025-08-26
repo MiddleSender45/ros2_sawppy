@@ -1,0 +1,10 @@
+[Unit]
+Description=Beep on boot
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/beep.sh
+
+[Install]
+WantedBy=multi-user.target
