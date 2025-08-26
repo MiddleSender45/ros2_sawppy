@@ -99,13 +99,10 @@ def generate_launch_description():
         executable="kinect_ros2_node",
         namespace="kinect",
         condition=conditions.IfCondition(use_kinect),
-<<<<<<< HEAD
-=======
         additional_env={
             "RMW_IMPLEMENTATION": "rmw_fastrtps_cpp",
             "ROS_DISCOVERY_SERVER": ros_discovery_server_addr,
         },
->>>>>>> fork/working
     )
 
     launch_discovery_server = ExecuteProcess(
