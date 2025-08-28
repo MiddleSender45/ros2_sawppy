@@ -73,7 +73,6 @@ def generate_launch_description():
         output="screen",
     )
 
-
     # Robot State Publisher
     use_robot_state_publisher_arg = DeclareLaunchArgument(
         "use_robot_state_publisher",
@@ -89,7 +88,6 @@ def generate_launch_description():
             os.path.join(robot_description_pkg_share, "launch", "robot_state_publisher.launch.py")
         ),
         launch_arguments={
-            "use_robot_state_publisher": use_robot_state_publisher,
             "ros_discovery_server_addr": ros_discovery_server_addr,
         }.items(),
         condition=conditions.IfCondition(use_robot_state_publisher),
@@ -165,15 +163,18 @@ def generate_launch_description():
     ld.add_action(use_kinect_arg)
     ld.add_action(discovery_server_arg)
     ld.add_action(ros_discovery_server_addr_arg)
+    ld.add_action(use_robot_state_publisher_arg)
 
     # The included launch descriptions already have conditions attached
     # (conditions.IfCondition on the substitutions). Add them to the
     # launch description unconditionally and let the launch system
     # evaluate the conditions at runtime.
+
     ld.add_action(urg_node_action_cmd)
     ld.add_action(kinect_node_action_cmd)
     ld.add_action(teleop_twist_joy_action_cmd)
     ld.add_action(rover_motor_controller_action_cmd)
     ld.add_action(launch_discovery_server)
+    ld.add_action(robot_state_publisher_launch)
 
     return ld
