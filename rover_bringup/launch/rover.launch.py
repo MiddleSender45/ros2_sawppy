@@ -65,6 +65,36 @@ def generate_launch_description():
     )
     ros_discovery_server_addr = LaunchConfiguration("ros_discovery_server_addr")
 
+    # Discovery Server (allows nodes to discover each other)
+    launch_discovery_server = ExecuteProcess(
+        cmd=["fastdds", "discovery", "-i", "0", "-l", "0.0.0.0", "-p", "11811"],
+        name="fastdds_discovery_server",
+        condition=conditions.IfCondition(use_discovery_server),
+        output="screen",
+    )
+
+
+    # Robot State Publisher
+    use_robot_state_publisher_arg = DeclareLaunchArgument(
+        "use_robot_state_publisher",
+        default_value="true",
+        description="Whether to launch the robot_state_publisher node",
+    )
+    use_robot_state_publisher = LaunchConfiguration("use_robot_state_publisher")
+
+    robot_description_pkg_share = get_package_share_directory("rover_description")
+
+    robot_state_publisher_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(robot_description_pkg_share, "launch", "robot_state_publisher.launch.py")
+        ),
+        launch_arguments={
+            "use_robot_state_publisher": use_robot_state_publisher,
+            "ros_discovery_server_addr": ros_discovery_server_addr,
+        }.items(),
+        condition=conditions.IfCondition(use_robot_state_publisher),
+    )
+
     # LIDAR
     use_lidar_arg = DeclareLaunchArgument(
         "use_lidar",
@@ -105,12 +135,6 @@ def generate_launch_description():
         },
     )
 
-    launch_discovery_server = ExecuteProcess(
-        cmd=["fastdds", "discovery", "-i", "0", "-l", "0.0.0.0", "-p", "11811"],
-        name="fastdds_discovery_server",
-        condition=conditions.IfCondition(use_discovery_server),
-        output="screen",
-    )
 
     teleop_twist_joy_action_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
