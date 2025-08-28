@@ -1,6 +1,6 @@
 name: C++ Formatting Check
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   cpp_formatter:
