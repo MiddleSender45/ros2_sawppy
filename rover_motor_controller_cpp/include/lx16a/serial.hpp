@@ -26,6 +26,7 @@
 #include <memory>
 
 #include <boost/asio.hpp>
+#define BOOST_BIND_GLOBAL_PLACEHOLDERS
 #include <boost/bind.hpp>
 #include <boost/system/system_error.hpp>
 
