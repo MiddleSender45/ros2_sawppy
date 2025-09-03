@@ -11,7 +11,7 @@
     <xacro:include filename="$(find rover_description)/urdf/wheels/wheel.urdf.xacro" />
     <xacro:include filename="$(find rover_description)/urdf/wheels/corner.urdf.xacro" />
     <xacro:include filename="$(find rover_description)/urdf/sensors/all_sensors.urdf.xacro" />
-    <!-- Gazebo ROS2 Control -->
+    <!-- Gazebo ROS2 Control 
     <gazebo>
         <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
             <parameters>$(find rover_description)/config/control.yaml</parameters>
@@ -138,6 +138,82 @@
             <state_interface name="effort"/>
         </joint>
     </ros2_control>
+    -->
+
+<!-- Plugin config from https://github.com/ThiwakarS/ROS2-jazzy-GZ-harmonic -->
+
+<!--
+<gazebo>
+        <plugin
+            filename="gz-sim-user-commands-system"
+            name="gz::sim::systems::UserCommands">
+        </plugin>
+  
+        <plugin
+            filename="gz-sim-scene-broadcaster-system"
+            name="gz::sim::systems::SceneBroadcaster">
+        </plugin>
+  
+        <plugin
+            filename="gz-sim-sensors-system"
+            name="gz::sim::systems::Sensors">
+            <render_engine>ogre2</render_engine>
+        </plugin>
+      
+        <plugin
+            filename="gz-sim-imu-system"
+            name="gz::sim::systems::Imu">
+        </plugin>
+    </gazebo>
+-->
+
+    <!-- Temporary 
+    
+        <plugin
+            filename="gz-sim-diff-drive-system"
+            name="gz::sim::systems::DiffDrive">
+
+            <left_joint>mid_left_wheel_joint</left_joint>
+            <right_joint>mid_right_wheel_joint</right_joint>
+
+            <wheel_separation>0.0929</wheel_separation>
+            <wheel_radius>0.06</wheel_radius> 
+
+            <topic>cmd_vel</topic> 
+
+            <odom_topic>odom</odom_topic>
+            <frame_id>odom</frame_id> 
+            <child_frame_id>base_link</child_frame_id> 
+            <odom_publisher_frequency>50</odom_publisher_frequency> 
+
+            <tf_topic>/tf</tf_topic> 
+        </plugin>
+
+
+        <plugin filename="gz-sim-joint-state-publisher-system"
+            name="gz::sim::systems::JointStatePublisher">
+            <topic>joint_states</topic> 
+            <joint_name>left_rocker_joint</joint_name>
+            <joint_name>right_rocker_joint</joint_name>
+            <joint_name>left_bogie_joint</joint_name>
+            <joint_name>right_bogie_joint</joint_name>
+            <joint_name>diff_brace_joint</joint_name>
+            <joint_name>back_left_turnbuckle_joint</joint_name>
+            <joint_name>back_right_turnbuckle_joint</joint_name>
+            <joint_name>front_left_turnbuckle_joint</joint_name>
+            <joint_name>front_right_turnbuckle_joint</joint_name>
+            <joint_name>front_left_corner_joint</joint_name>
+            <joint_name>front_right_corner_joint</joint_name>
+            <joint_name>back_left_corner_joint</joint_name>
+            <joint_name>back_right_corner_joint</joint_name>
+        </plugin>
+
+        <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+            <parameters>$(find rover_description)/config/control.yaml</parameters>
+        </plugin>
+-->
+
+
     <!-- The base link -->
     <link name="base_link">
         <visual>
@@ -148,6 +224,7 @@
             <material name="orange" />
         </visual>
     </link>
+
     <gazebo reference="base_link">
         <material>Gazebo/Orange</material>
     </gazebo>
