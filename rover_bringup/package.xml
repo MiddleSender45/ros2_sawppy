@@ -7,6 +7,12 @@
   <maintainer email="mgons@unileon.es">Miguel Ángel González Santamarta</maintainer>
   <license>MIT</license>
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>joint_state_publisher_gui</depend>
+  <depend>ros_gz</depend>
+  <depend>sdformat_urdf</depend>
+  <depend>rover_description</depend>
+  <depend>rover_gazebo</depend>
+
   <depend>rover_motor_controller_cpp</depend>
   <depend>joy_linux</depend>
   <depend>teleop_twist_joy</depend>

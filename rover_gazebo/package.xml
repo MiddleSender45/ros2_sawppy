@@ -3,14 +3,15 @@
 <package format="3">
   <name>rover_gazebo</name>
   <version>1.1.0</version>
-  <description>Rover Gazebo package</description>
+  <description>Gazebo-specific implementations for the rover_gazebo project</description>
   <maintainer email="mgons@unileon.es">Miguel Ángel González Santamarta</maintainer>
   <license>MIT</license>
   <buildtool_depend>ament_cmake</buildtool_depend>
-  <depend>gazebo</depend>
-  <depend>gazebo_ros2_control</depend>
-  <depend>gazebo_ros_pkgs</depend>
-  <depend>gazebo_plugins</depend>
+  <depend>ros_gz</depend>
+  <depend>ros_gz_sim</depend>
+  <depend>ros_gz_bridge</depend>
+  <depend>ros_gz_interfaces</depend>
+  <depend>gz_ros2_control</depend> <!-- must build from source (humble branch) -->
   <depend>joint_state_broadcaster</depend>
   <depend>robot_state_publisher</depend>
   <depend>position_controllers</depend>
@@ -24,6 +25,5 @@
   <depend>trajectory_msgs</depend>
   <export>
     <build_type>ament_cmake</build_type>
-    <gazebo_ros gazebo_model_path="${prefix}/models"/>
   </export>
 </package>

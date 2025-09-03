@@ -4,8 +4,11 @@ project(rover_description)
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY config launch meshes urdf robots
+  DIRECTORY config launch meshes urdf models
   DESTINATION share/${PROJECT_NAME}
 )
+
+ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/hooks/${PROJECT_NAME}.dsv.in")
+ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/hooks/${PROJECT_NAME}.sh.in")
 
 ament_package()
