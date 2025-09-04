@@ -31,7 +31,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')  
-    use_rviz = LaunchConfiguration('rviz', default='false')
+    use_rviz = LaunchConfiguration('rviz', default='true')
 
     # Setup project paths
     pkg_project_bringup = get_package_share_directory('rover_bringup')
@@ -117,7 +117,7 @@ def generate_launch_description():
 
     ld.add_action(gz_sim)
     ld.add_action(spawn_robot)
-    #ld.add_action(bridge)
+    ld.add_action(bridge)
     ld.add_action(robot_state_publisher)
     ld.add_action(rviz)
     return ld

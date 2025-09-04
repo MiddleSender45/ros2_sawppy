@@ -64,6 +64,7 @@
           izz="0.001" />
       </inertial>
     </link>
+<!--
     <gazebo reference="${prefix}_link">
       <sensor name="camera" type="depth">
         <visualize>true</visualize>
@@ -153,5 +154,6 @@
         </plugin>
       </sensor>
     </gazebo>
+-->
   </xacro:macro>
 </robot>

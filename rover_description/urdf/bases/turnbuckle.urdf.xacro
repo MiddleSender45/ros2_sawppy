@@ -65,11 +65,13 @@
                     </inertia>
                 </inertial>
             </link>
+            <!-- can't have closed loops in URDF
             <joint name="back_${lat_label}_turnbuckle_joint" type="ball">
                 <pose>-0.035 0 0 0 0 0</pose>
                 <parent>diff_brace_link</parent>
                 <child>${lat_label}_turnbuckle_link</child>
             </joint>
+            -->
             <joint name="front_${lat_label}_turnbuckle_joint" type="ball">
                 <pose>0.035 0 0 0 0 0</pose>
                 <parent>${lat_label}_rocker_link</parent>

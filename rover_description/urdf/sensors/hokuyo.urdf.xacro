@@ -28,6 +28,7 @@
       <parent link="${parent}"/>
       <child link="${prefix}_base_link"/>
     </joint>
+
     <link name="${prefix}_base_link">
       <collision>
         <origin xyz="0 0 -0.05" rpy="0 0 0"/>
@@ -52,8 +53,6 @@
       <material>Gazebo/DarkGrey</material>
     </gazebo>
 
-    <link name="${prefix}_link">
-    </link>
 
     <joint name="${prefix}_joint" type="fixed">
       <parent link="${prefix}_base_link"/>
@@ -61,13 +60,25 @@
       <origin xyz="0.00 0 0.0" rpy="0 0 0"/>
     </joint>
 
-<!--
+    <link name="${prefix}_link">
+    </link>
+
+    <gazebo>
+      <plugin
+          filename="gz-sim-sensors-system"
+          name="gz::sim::systems::Sensors">
+          <render_engine>ogre2</render_engine>
+      </plugin>
+    </gazebo>
+
+    
     <gazebo reference="${prefix}_link">
-    <sensor name='gpu_lidar' type='gpu_lidar'>"
-    <pose relative_to="${prefix}_link">0 0 0 0 0 0</pose>
-    <topic>scan</topic>
-    <update_rate>10</update_rate>
-    <ray>
+      <sensor name='gpu_lidar' type='gpu_lidar'>
+      <pose relative_to='${prefix}_link'>0 0 0 0 0 0</pose>
+      <topic>scan</topic>
+      <gz_frame_id>${prefix}_link</gz_frame_id>
+      <update_rate>10</update_rate>
+      <lidar>
         <scan>
             <horizontal>
                 <samples>640</samples>
@@ -87,11 +98,17 @@
             <max>10.0</max>
             <resolution>0.01</resolution>
         </range>
-    </ray>
-    <always_on>1</always_on>
+    </lidar>
     <visualize>true</visualize>
-</sensor>
-    </gazebo>
--->
+    </sensor>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="gz::sim::systems::LidarVisual"
+        filename="gz-sim-lidar-visual-system">
+        <topic>/scan</topic>
+    </plugin>
+  </gazebo>
+
   </xacro:macro>
 </robot>

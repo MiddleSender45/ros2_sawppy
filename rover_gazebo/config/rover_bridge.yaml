@@ -47,6 +47,13 @@
   gz_type_name: "gz.msgs.LaserScan"
   direction: GZ_TO_ROS
 
+# gz topic published by Sensors plugin (LIDAR)
+- ros_topic_name: "points"
+  gz_topic_name: "points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+
 # gz topic published by Sensors plugin (Camera)
 - ros_topic_name: "camera/camera_info"
   gz_topic_name: "camera/camera_info"
