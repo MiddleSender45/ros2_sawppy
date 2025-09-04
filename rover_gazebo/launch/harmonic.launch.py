@@ -39,11 +39,6 @@ def generate_launch_description():
     pkg_project_description = get_package_share_directory('rover_description')
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
 
-    # Load the SDF file from "description" package
-    #sdf_file  =  os.path.join(pkg_project_description, 'models', 'diff_drive', 'model.sdf')
-    #with open(sdf_file, 'r') as infp:
-    #    robot_desc = infp.read()
-
     # Robot description
     robot_description = ParameterValue(
         Command(['xacro ', PathJoinSubstitution([
@@ -80,7 +75,16 @@ def generate_launch_description():
         }]
     )
 
-    # Spawn robot
+    # Start controllers
+    cmd_vel_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_project_bringup, 'launch', 'cmd_vel.launch.py')    
+        )
+    )
+    spawn_
+
+
+    # Spawn robot in gazebo
     spawn_robot = Node(
         package='ros_gz_sim',
         executable='create',
