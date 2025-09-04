@@ -83,55 +83,55 @@ def generate_launch_description():
         output='screen',
     )
 
-#    joint_state_broadcaster_spawner = Node(
-#        name="joint_state_broadcaster_spawner",
-#        package="controller_manager",
-#        executable="spawner",
-#        arguments=[
-#            "joint_state_broadcaster",
-#            "--controller-manager",
-#            "/controller_manager",
-#            "--controller-manager-timeout",
-#            "120",
-#        ],
-#    )
-#
-#    position_controller_spawner = Node(
-#        name="position_controller_spawner",
-#        package="controller_manager",
-#        executable="spawner",
-#        arguments=[
-#            "position_controller",
-#            "--controller-manager",
-#            "/controller_manager",
-#            "--controller-manager-timeout",
-#            "120",
-#        ],
-#    )
-#
-#    velocity_controller_spawner = Node(
-#        name="velocity_controller_spawner",
-#        package="controller_manager",
-#        executable="spawner",
-#        arguments=[
-#            "velocity_controller",
-#            "--controller-manager",
-#            "/controller_manager",
-#            "--controller-manager-timeout",
-#            "120",
-#        ],
-#    )
-#
-#    ### LAUNCH ###
-#    robot_state_publisher_cmd = IncludeLaunchDescription(
-#        PythonLaunchDescriptionSource(
-#            os.path.join(
-#                get_package_share_directory("rover_description"),
-#                "launch",
-#                "robot_state_publisher.launch.py",
-#            )
-#        )
-#    )
+    joint_state_broadcaster_spawner = Node(
+        name="joint_state_broadcaster_spawner",
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            "joint_state_broadcaster",
+            "--controller-manager",
+            "/controller_manager",
+            "--controller-manager-timeout",
+            "120",
+        ],
+    )
+
+    position_controller_spawner = Node(
+        name="position_controller_spawner",
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            "position_controller",
+            "--controller-manager",
+            "/controller_manager",
+            "--controller-manager-timeout",
+            "120",
+        ],
+    )
+
+    velocity_controller_spawner = Node(
+        name="velocity_controller_spawner",
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            "velocity_controller",
+            "--controller-manager",
+            "/controller_manager",
+            "--controller-manager-timeout",
+            "120",
+        ],
+    )
+
+    ### LAUNCH ###
+    robot_state_publisher_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory("rover_description"),
+                "launch",
+                "robot_state_publisher.launch.py",
+            )
+        )
+    )
 
     ld = LaunchDescription()
 
@@ -143,9 +143,9 @@ def generate_launch_description():
     ld.add_action(spawn_entity_cmd)
     ld.add_action(start_gazebo_ros_bridge_cmd)  
 
-#    ld.add_action(joint_state_broadcaster_spawner)
-#    ld.add_action(position_controller_spawner)
-#    ld.add_action(velocity_controller_spawner)
-#    ld.add_action(robot_state_publisher_cmd)
+    ld.add_action(joint_state_broadcaster_spawner)
+    ld.add_action(position_controller_spawner)
+    ld.add_action(velocity_controller_spawner)
+    ld.add_action(robot_state_publisher_cmd)
 
     return ld
