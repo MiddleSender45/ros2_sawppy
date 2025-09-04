@@ -11,6 +11,65 @@
     <xacro:include filename="$(find rover_description)/urdf/wheels/wheel.urdf.xacro" />
     <xacro:include filename="$(find rover_description)/urdf/wheels/corner.urdf.xacro" />
     <xacro:include filename="$(find rover_description)/urdf/sensors/all_sensors.urdf.xacro" />
+
+    <!-- The base link -->
+    <link name="base_link">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+            <geometry>
+                <box size="0.01 0.01 0.01"/>
+            </geometry>
+            <material name="orange" />
+        </visual>
+    </link>
+
+    <gazebo reference="base_link">
+        <material>Gazebo/Orange</material>
+    </gazebo>
+    <!-- body -->
+    <xacro:body parent="base_link" />
+    <xacro:differential parent="base_link" />
+    <xacro:turnbuckle lat_label="left" reflect="1"/>
+    <xacro:turnbuckle lat_label="right" reflect="-1"/>
+    <xacro:rocker parent="base_link" lat_label="left" reflect="1"/>
+    <xacro:rocker parent="base_link" lat_label="right" reflect="-1"/>
+    <xacro:bogie lat_label="left" reflect="1"/>
+    <xacro:bogie lat_label="right" reflect="-1"/>
+    <!-- sensors -->
+    <xacro:sensor_hokuyo prefix="laser" parent="base_link" min_angle="-1.0" max_angle="1.0">
+        <origin xyz="0.17 0 0.005" rpy="0 0 0"/>
+    </xacro:sensor_hokuyo>
+    <xacro:sensor_imu prefix="imu" parent="base_link">
+        <!-- <origin xyz="-0.32 0 0.05" rpy="0 0.5 0"/> -->
+        <origin xyz="0 0 -0.04" rpy="0 0 0"/>
+    </xacro:sensor_imu>
+    <xacro:sensor_asus_xtion prefix="camera" parent="base_link">
+        <origin xyz="0.215 0 0.065" rpy="0 0.4 0"/>
+        <!-- <origin xyz="0.212 0 0.065" rpy="0 0 0"/> -->
+    </xacro:sensor_asus_xtion>
+    <!-- wheels -->
+    <xacro:corner_link lon_label="front" lat_label="left" reflect="1"/>
+    <xacro:corner_link lon_label="front" lat_label="right" reflect="-1"/>
+    <xacro:front_corner_joint lat_label="left" reflect="1"/>
+    <xacro:front_corner_joint lat_label="right" reflect="-1"/>
+    <xacro:corner_link lon_label="back" lat_label="left" reflect="1"/>
+    <xacro:corner_link lon_label="back" lat_label="right" reflect="-1"/>
+    <xacro:back_corner_joint lat_label="left" reflect="1"/>
+    <xacro:back_corner_joint lat_label="right" reflect="-1"/>
+    <xacro:wheel_link lon_label="front" lat_label="left" reflect="1"/>
+    <xacro:wheel_link lon_label="front" lat_label="right" reflect="-1"/>
+    <xacro:corner_wheel_joint lon_label="front" lat_label="left" reflect="1"/>
+    <xacro:corner_wheel_joint lon_label="front" lat_label="right" reflect="-1"/>
+    <xacro:wheel_link lon_label="mid" lat_label="left" reflect="1"/>
+    <xacro:wheel_link lon_label="mid" lat_label="right" reflect="-1"/>
+    <xacro:mid_wheel_joint lat_label="left" reflect="1"/>
+    <xacro:mid_wheel_joint lat_label="right" reflect="-1"/>
+    <xacro:wheel_link lon_label="back" lat_label="left" reflect="1"/>
+    <xacro:wheel_link lon_label="back" lat_label="right" reflect="-1"/>
+    <xacro:corner_wheel_joint lon_label="back" lat_label="left" reflect="1"/>
+    <xacro:corner_wheel_joint lon_label="back" lat_label="right" reflect="-1"/>
+
+
     <!-- Gazebo ROS2 Control 
     <gazebo>
         <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
@@ -213,61 +272,4 @@
         </plugin>
 -->
 
-
-    <!-- The base link -->
-    <link name="base_link">
-        <visual>
-            <origin rpy="0 0 0" xyz="0 0 0" />
-            <geometry>
-                <box size="0.01 0.01 0.01"/>
-            </geometry>
-            <material name="orange" />
-        </visual>
-    </link>
-
-    <gazebo reference="base_link">
-        <material>Gazebo/Orange</material>
-    </gazebo>
-    <!-- body -->
-    <xacro:body parent="base_link" />
-    <xacro:differential parent="base_link" />
-    <xacro:turnbuckle lat_label="left" reflect="1"/>
-    <xacro:turnbuckle lat_label="right" reflect="-1"/>
-    <xacro:rocker parent="base_link" lat_label="left" reflect="1"/>
-    <xacro:rocker parent="base_link" lat_label="right" reflect="-1"/>
-    <xacro:bogie lat_label="left" reflect="1"/>
-    <xacro:bogie lat_label="right" reflect="-1"/>
-    <!-- sensors -->
-    <xacro:sensor_hokuyo prefix="laser" parent="base_link" min_angle="-1.0" max_angle="1.0">
-        <origin xyz="0.17 0 0.005" rpy="0 0 0"/>
-    </xacro:sensor_hokuyo>
-    <xacro:sensor_imu prefix="imu" parent="base_link">
-        <!-- <origin xyz="-0.32 0 0.05" rpy="0 0.5 0"/> -->
-        <origin xyz="0 0 -0.04" rpy="0 0 0"/>
-    </xacro:sensor_imu>
-    <xacro:sensor_asus_xtion prefix="camera" parent="base_link">
-        <origin xyz="0.215 0 0.065" rpy="0 0.4 0"/>
-        <!-- <origin xyz="0.212 0 0.065" rpy="0 0 0"/> -->
-    </xacro:sensor_asus_xtion>
-    <!-- wheels -->
-    <xacro:corner_link lon_label="front" lat_label="left" reflect="1"/>
-    <xacro:corner_link lon_label="front" lat_label="right" reflect="-1"/>
-    <xacro:front_corner_joint lat_label="left" reflect="1"/>
-    <xacro:front_corner_joint lat_label="right" reflect="-1"/>
-    <xacro:corner_link lon_label="back" lat_label="left" reflect="1"/>
-    <xacro:corner_link lon_label="back" lat_label="right" reflect="-1"/>
-    <xacro:back_corner_joint lat_label="left" reflect="1"/>
-    <xacro:back_corner_joint lat_label="right" reflect="-1"/>
-    <xacro:wheel_link lon_label="front" lat_label="left" reflect="1"/>
-    <xacro:wheel_link lon_label="front" lat_label="right" reflect="-1"/>
-    <xacro:corner_wheel_joint lon_label="front" lat_label="left" reflect="1"/>
-    <xacro:corner_wheel_joint lon_label="front" lat_label="right" reflect="-1"/>
-    <xacro:wheel_link lon_label="mid" lat_label="left" reflect="1"/>
-    <xacro:wheel_link lon_label="mid" lat_label="right" reflect="-1"/>
-    <xacro:mid_wheel_joint lat_label="left" reflect="1"/>
-    <xacro:mid_wheel_joint lat_label="right" reflect="-1"/>
-    <xacro:wheel_link lon_label="back" lat_label="left" reflect="1"/>
-    <xacro:wheel_link lon_label="back" lat_label="right" reflect="-1"/>
-    <xacro:corner_wheel_joint lon_label="back" lat_label="left" reflect="1"/>
-    <xacro:corner_wheel_joint lon_label="back" lat_label="right" reflect="-1"/>
 </robot>

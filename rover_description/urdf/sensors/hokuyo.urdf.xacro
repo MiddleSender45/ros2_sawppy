@@ -103,12 +103,5 @@
     </sensor>
   </gazebo>
 
-  <gazebo>
-    <plugin name="gz::sim::systems::LidarVisual"
-        filename="gz-sim-lidar-visual-system">
-        <topic>/scan</topic>
-    </plugin>
-  </gazebo>
-
   </xacro:macro>
 </robot>
