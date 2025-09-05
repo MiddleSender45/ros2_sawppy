@@ -34,7 +34,6 @@ def generate_launch_description():
     rover_motor_controller_shared_dir = get_package_share_directory(
         "rover_motor_controller_cpp"
     )
-    rover_teleop_shared_dir = get_package_share_directory("rover_teleop")
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
         "RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED", "1"
@@ -57,8 +56,15 @@ def generate_launch_description():
 
     teleop_twist_joy_action_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(rover_teleop_shared_dir, "launch", "joy_teleop.launch.py")
-        )
+            os.path.join(
+                get_package_share_directory("teleop_twist_joy"),
+                "launch",
+                "teleop-launch.py"
+            )
+        ),
+        launch_arguments={
+            "joy_config": "pdp"
+        }.items(),
     )
 
     rover_motor_controller_action_cmd = IncludeLaunchDescription(

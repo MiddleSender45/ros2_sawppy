@@ -26,7 +26,8 @@
     <xacro:property name="rocker_box_depth" value="0.10" />
     <xacro:property name="rocker_box_mass" value="0.25" />
     <xacro:include filename="$(find rover_description)/urdf/inertials.xacro"/>
-    <xacro:macro name="rocker" params="parent lat_label reflect">
+
+    <xacro:macro name="rocker" params="parent lat_label reflect use_gazebo:=true">
         <!-- link -->
         <link name="${lat_label}_rocker_link">
             <visual>
@@ -52,7 +53,9 @@
         <gazebo reference="${lat_label}_rocker_link">
             <material>Gazebo/White</material>
         </gazebo>
-        <!-- joint -->
+        <!-- fix joint for simulation -->
+        <xacro:if value="${use_gazebo}">
+        <gazebo>
         <joint name="${lat_label}_rocker_joint" type="continuous">
             <origin rpy="0 0 0" xyz="0.071 ${reflect * 0.155} 0.0118"/>
             <axis xyz="0 1 0" />
@@ -64,6 +67,24 @@
             <parent link="${parent}" />
             <child link="${lat_label}_rocker_link" />
         </joint>
+        </gazebo>
+        </xacro:if>
+
+        <!-- real joint for control -->
+        <xacro:unless value="${use_gazebo}">
+        <joint name="${lat_label}_rocker_joint" type="continuous">
+            <origin rpy="0 0 0" xyz="0.071 ${reflect * 0.155} 0.0118"/>
+            <axis xyz="0 1 0" />
+            <limit 
+                lower="${-math_pi_over_4}"
+                upper="${math_pi_over_4}"
+                effort="100.0"
+                velocity="30.0" />
+            <parent link="${parent}" />
+            <child link="${lat_label}_rocker_link" />
+        </joint>
+        </xacro:unless>
+
         <gazebo reference="${lat_label}_rocker_joint">
             <provideFeedback>true</provideFeedback>
             <implicitSpringDamper>true</implicitSpringDamper>

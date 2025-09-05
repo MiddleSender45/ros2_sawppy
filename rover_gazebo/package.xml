@@ -7,16 +7,31 @@
   <maintainer email="mgons@unileon.es">Miguel Ángel González Santamarta</maintainer>
   <license>MIT</license>
   <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- ros2_control -->
+  <depend>ros2_control_cmake</depend>
+  <exec_depend>control_msgs</exec_depend>
+
+  <exec_depend>gz_ros2_control</exec_depend>
+  <!-- saw a note that you must build from source (humble branch) -->
+
+  <exec_depend>hardware_interface</exec_depend>
+  <exec_depend>imu_sensor_broadcaster</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>ros2controlcli</exec_depend>
+  <exec_depend>velocity_controllers</exec_depend>
+
   <depend>ros_gz</depend>
   <depend>ros_gz_sim</depend>
   <depend>ros_gz_bridge</depend>
   <depend>ros_gz_interfaces</depend>
-  <depend>gz_ros2_control</depend> <!-- must build from source (humble branch) -->
-  <depend>joint_state_broadcaster</depend>
+
   <depend>robot_state_publisher</depend>
   <depend>position_controllers</depend>
-  <depend>velocity_controllers</depend>
   <depend>controller_manager</depend>
+  <exec_depend>hardware_interface</exec_depend>
+
   <depend>rviz2</depend>
   <depend>rover_description</depend>
   <depend>rover_msgs</depend>
