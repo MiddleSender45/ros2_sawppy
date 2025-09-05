@@ -55,7 +55,6 @@
         </gazebo>
         <!-- fix joint for simulation -->
         <xacro:if value="${use_gazebo}">
-        <gazebo>
         <joint name="${lat_label}_rocker_joint" type="continuous">
             <origin rpy="0 0 0" xyz="0.071 ${reflect * 0.155} 0.0118"/>
             <axis xyz="0 1 0" />
@@ -67,7 +66,6 @@
             <parent link="${parent}" />
             <child link="${lat_label}_rocker_link" />
         </joint>
-        </gazebo>
         </xacro:if>
 
         <!-- real joint for control -->

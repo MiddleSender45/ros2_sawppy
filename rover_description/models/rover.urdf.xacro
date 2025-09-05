@@ -36,7 +36,6 @@
     <xacro:body parent="base_link" />
     <xacro:differential parent="base_link" />
     <xacro:turnbuckle lat_label="left" reflect="1"/>
-    <!--
     <xacro:turnbuckle lat_label="right" reflect="-1"/>
     <xacro:rocker parent="base_link" lat_label="left" reflect="1"/>
     <xacro:rocker parent="base_link" lat_label="right" reflect="-1"/>
@@ -71,7 +70,6 @@
     <xacro:wheel_link lon_label="back" lat_label="right" reflect="-1"/>
     <xacro:corner_wheel_joint lon_label="back" lat_label="left" reflect="1"/>
     <xacro:corner_wheel_joint lon_label="back" lat_label="right" reflect="-1"/>
-    -->
 
     <!-- For Gazebo Harmonic (Ignition/Gazebo >= Garden), use gz-sim-joint-state-publisher-system -->
     <!-- 
