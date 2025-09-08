@@ -53,8 +53,6 @@
         <gazebo reference="${lat_label}_rocker_link">
             <material>Gazebo/White</material>
         </gazebo>
-        <!-- fix joint for simulation -->
-        <xacro:if value="${use_gazebo}">
         <joint name="${lat_label}_rocker_joint" type="continuous">
             <origin rpy="0 0 0" xyz="0.071 ${reflect * 0.155} 0.0118"/>
             <axis xyz="0 1 0" />
@@ -65,23 +63,16 @@
                 velocity="30.0" />
             <parent link="${parent}" />
             <child link="${lat_label}_rocker_link" />
-        </joint>
-        </xacro:if>
 
-        <!-- real joint for control -->
-        <xacro:unless value="${use_gazebo}">
-        <joint name="${lat_label}_rocker_joint" type="continuous">
-            <origin rpy="0 0 0" xyz="0.071 ${reflect * 0.155} 0.0118"/>
-            <axis xyz="0 1 0" />
-            <limit 
-                lower="${-math_pi_over_4}"
-                upper="${math_pi_over_4}"
-                effort="100.0"
-                velocity="30.0" />
-            <parent link="${parent}" />
-            <child link="${lat_label}_rocker_link" />
+            <!-- In gazebo make the right rocker joint mimic the left.  In the Actual rover, 
+                 this is done by the differential bars -->
+            <xacro:if value="${use_gazebo}">
+                <xacro:if value="${lat_label == 'right'}">
+                    <mimic joint="left_rocker_joint" multiplier="-1.0" offset="0.0"/>
+                </xacro:if>
+            </xacro:if>
+
         </joint>
-        </xacro:unless>
 
         <gazebo reference="${lat_label}_rocker_joint">
             <provideFeedback>true</provideFeedback>
