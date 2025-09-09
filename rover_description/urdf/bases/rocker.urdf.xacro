@@ -51,25 +51,30 @@
                 x="${rocker_box_length}" y="${rocker_box_width}" z="${rocker_box_depth}" />
         </link>
         <gazebo reference="${lat_label}_rocker_link">
-            <material>Gazebo/White</material>
+            <material name="white" />
         </gazebo>
-        <joint name="${lat_label}_rocker_joint" type="continuous">
+        <!-- should be fixed for gazebo simulation, continuous for actual rover -->
+        <joint name="${lat_label}_rocker_joint" type="revolute"> <!-- fixed -->
             <origin rpy="0 0 0" xyz="0.071 ${reflect * 0.155} 0.0118"/>
             <axis xyz="0 1 0" />
             <limit 
-                lower="${-math_pi_over_4}"
-                upper="${math_pi_over_4}"
-                effort="100.0"
-                velocity="30.0" />
+                lower="-0.3"
+                upper="0.3"
+                effort="0.0"
+                velocity="0.0" />
             <parent link="${parent}" />
             <child link="${lat_label}_rocker_link" />
+            <dynamics damping="0.05" friction="0.0"/>
 
-            <!-- In gazebo make the right rocker joint mimic the left.  In the Actual rover, 
-                 this is done by the differential bars -->
+            <!-- Outside (i.e. RVIZ), you can make the rocker joints mimic the differential bar.  
+                 In the Actual rover, this is done by the turnbuckles attached to the differential bar -->
+                 <!-- dist between center of rover and top end turnbuckle= 166.5 mm -->
+                 <!-- dist between pivot of rocker and other end of turnbuckle = 58 mm -->
             <xacro:if value="${use_gazebo}">
-                <xacro:if value="${lat_label == 'right'}">
-                    <mimic joint="left_rocker_joint" multiplier="-1.0" offset="0.0"/>
-                </xacro:if>
+              <xacro:if value="${lat_label == 'left'}">
+                <mimic joint="right_rocker_joint" multiplier="1" offset="0.0"/>
+              </xacro:if>
+                <!-- <mimic joint="diff_brace_joint" multiplier="-2.87" offset="0.0"/> -->
             </xacro:if>
 
         </joint>

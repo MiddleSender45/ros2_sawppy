@@ -50,7 +50,7 @@
                 x="${corner_box_length}" y="${corner_box_width}" z="${corner_box_depth}" />
         </link>
         <gazebo reference="${lon_label}_${lat_label}_corner_link">
-            <material>Gazebo/White</material>
+            <material name="white"/>
         </gazebo>
     </xacro:macro>
     <!-- front joint -->

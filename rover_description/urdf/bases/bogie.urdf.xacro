@@ -49,7 +49,7 @@
                 x="${bogie_box_length}" y="${bogie_box_width}" z="${bogie_box_depth}" />
         </link>
         <gazebo reference="${lat_label}_bogie_link">
-            <material>Gazebo/White</material>
+            <material name="white" />
         </gazebo>
         <!-- joint -->
         <joint name="${lat_label}_bogie_joint" type="revolute">
@@ -58,10 +58,11 @@
             <limit 
                 lower="${-math_pi_over_4}"
                 upper="${math_pi_over_4}"
-                effort="100.0"
-                velocity="30.0" />
+                effort="0.0"
+                velocity="0.0" />
             <parent link="${lat_label}_rocker_link" />
             <child link="${lat_label}_bogie_link" />
+            <dynamics damping="0.05" friction="0.0"/>
         </joint>
         <gazebo reference="${lat_label}_bogie_joint">
             <provideFeedback>true</provideFeedback>

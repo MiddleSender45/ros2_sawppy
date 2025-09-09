@@ -30,10 +30,8 @@
         <link name="diff_brace_link">
             <visual>
                 <origin rpy="0 0 0" xyz="0 0 0" />
-                <!-- <origin rpy="0 0 ${math_pi_over_2}" xyz="0 0 0" /> -->
                 <geometry>
                     <mesh filename="package://rover_description/meshes/bases/differential.stl" />
-                    <!-- <box size="0.200 0.015 0.015"/> -->
                 </geometry>
                 <material name="white" />
             </visual>
@@ -49,22 +47,20 @@
                 x="${differential_box_length}" y="${differential_box_width}" z="${differential_box_depth}" />
         </link>
         <gazebo reference="diff_brace_link">
-            <material>Gazebo/White</material>
+            <material name="white" />
         </gazebo>
         <joint name="diff_brace_joint" type="revolute">
             <origin rpy="0 0 0" xyz="0 0 0.0681"/>
             <axis xyz="0 0 1" />
             <limit 
-                lower="${-math_pi_over_4}"
-                upper="${math_pi_over_4}"
-                effort="100.0"
-                velocity="30.0" />
+                lower="-0.2"
+                upper="0.2"
+                effort="0.0"
+                velocity="0.0" />
             <parent link="${parent}" />
             <child link="diff_brace_link" />
+            <dynamics damping="1.0" friction="1.0"/>
+            <mimic joint="right_rocker_joint" multiplier="0.35" offset="0.0"/>
         </joint>
-        <gazebo reference="diff_brace_joint">
-            <provideFeedback>true</provideFeedback>
-            <implicitSpringDamper>true</implicitSpringDamper>
-        </gazebo>
     </xacro:macro>
 </robot>

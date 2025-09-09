@@ -49,7 +49,7 @@
       </collision>
     </link>
     <gazebo reference="${prefix}_link">
-      <material>Gazebo/Blue</material>
+      <material name="blue"/>
     </gazebo>
     <!-- 
     <gazebo reference="${prefix}_link">

@@ -48,7 +48,7 @@
                 radius="${wheel_radius}" length="${wheel_width}" />
         </link>
         <gazebo reference="${lon_label}_${lat_label}_wheel_link">
-            <material>Gazebo/DarkGray</material>
+            <material name="dark_gray"/>
             <mu1>1.0</mu1>
             <mu2>1.0</mu2>
             <kp>10000000</kp>
