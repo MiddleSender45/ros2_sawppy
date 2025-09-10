@@ -126,8 +126,7 @@ def generate_launch_description():
                 pkg_project_gazebo,
                 'worlds',
                 'obstacle_course.sdf'
-            ]), ' -v 4']
-#            ]), ' -r -v 4']
+            ]), ' -r -v 4']
         }.items(),
     )
 

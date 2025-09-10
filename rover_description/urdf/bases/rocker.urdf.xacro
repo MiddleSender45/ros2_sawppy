@@ -72,7 +72,7 @@
                  <!-- dist between pivot of rocker and other end of turnbuckle = 58 mm -->
             <xacro:if value="${use_gazebo}">
               <xacro:if value="${lat_label == 'left'}">
-                <mimic joint="right_rocker_joint" multiplier="1" offset="0.0"/>
+                <mimic joint="right_rocker_joint" multiplier="-1" offset="0.0"/>
               </xacro:if>
                 <!-- <mimic joint="diff_brace_joint" multiplier="-2.87" offset="0.0"/> -->
             </xacro:if>
