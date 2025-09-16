@@ -57,9 +57,42 @@
   gz_type_name: "gz.msgs.PointCloudPacked"
   direction: GZ_TO_ROS
 
-# gz topic published by Sensors plugin (Camera)
-- ros_topic_name: "camera/camera_info"
-  gz_topic_name: "camera/camera_info"
+## You can re-enable 2D camera if present
+# - ros_topic_name: "camera/camera_info"
+#   gz_topic_name: "camera/camera_info"
+#   ros_type_name: "sensor_msgs/msg/CameraInfo"
+#   gz_type_name: "gz.msgs.CameraInfo"
+#   direction: GZ_TO_ROS
+
+# - ros_topic_name: "camera/image"
+#   gz_topic_name: "camera/image"
+#   ros_type_name: "sensor_msgs/msg/Image"
+#   gz_type_name: "gz.msgs.Image"
+#   direction: GZ_TO_ROS
+
+# gz topic published by RGBD Camera (color image)
+- ros_topic_name: "camera/camera_rgbd/image"
+  gz_topic_name: "camera/camera_rgbd/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+# gz topic published by Sensors plugin (RGBD Camera)
+- ros_topic_name: "camera/camera_rgbd/points"
+  gz_topic_name: "camera/camera_rgbd/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+
+# RGBD depth and camera info
+- ros_topic_name: "camera/camera_rgbd/depth_image"
+  gz_topic_name: "camera/camera_rgbd/depth_image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "camera/camera_rgbd/camera_info"
+  gz_topic_name: "camera/camera_rgbd/camera_info"
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS

@@ -23,12 +23,14 @@
 <robot name="sensor_asus_xtion" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:macro name="sensor_asus_xtion" params="prefix parent *origin ">
     <xacro:property name="math_pi_over_2" value="1.5707963267948966" />
+
     <joint name="${prefix}_joint" type="fixed">
       <axis xyz="1 0 0"/>
       <xacro:insert_block name="origin"/>
       <parent link="${parent}"/>
       <child link="${prefix}_link"/>
     </joint>
+
     <link name="${prefix}_link">
       <visual>
         <origin rpy="${math_pi_over_2} 0 ${math_pi_over_2}" xyz="0 0 0"/>
@@ -50,6 +52,7 @@
           izz="0.001" />
       </inertial>
     </link>
+
     <joint name="camera_frame_joint" type="fixed">
       <origin xyz="0 0 0" rpy="-${math_pi_over_2} 0 -${math_pi_over_2}" />
       <parent link="${prefix}_link" />
@@ -64,96 +67,82 @@
           izz="0.001" />
       </inertial>
     </link>
-<!--
+
+    <!-- REP 103-compliant optical frame: Z forward, X right, Y down.
+         In this model, camera_frame is already oriented as optical; we add
+         an explicit camera_optical_frame with identity transform for standard naming. -->
+    <joint name="camera_optical_frame_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="camera_frame" />
+      <child link="camera_optical_frame" />
+    </joint>
+    <link name="camera_optical_frame">
+      <inertial>
+        <mass value="0.0001" />
+        <origin xyz="0 0 0" />
+        <inertia ixx="1e-6" ixy="0.0" ixz="0.0"
+          iyy="1e-6" iyz="0.0"
+          izz="1e-6" />
+      </inertial>
+    </link>
+
     <gazebo reference="${prefix}_link">
-      <sensor name="camera" type="depth">
+
+<!--
+      <sensor name="camera" type="camera">
+        <always_on>true</always_on>
+        <update_rate>20</update_rate>
         <visualize>true</visualize>
-        <update_rate>30</update_rate>
+        <topic>camera/image</topic>
         <camera>
-          <horizontal_fov>${63.0*2*math_pi_over_2/180.0}</horizontal_fov>
+          <horizontal_fov>1.3962634</horizontal_fov>
           <image>
-            <format>B8G8R8</format>
             <width>640</width>
             <height>480</height>
+            <format>R8G8B8</format>
           </image>
           <clip>
-            <near>0.3</near>
-            <far>8.0</far>
+            <near>0.1</near>
+            <far>15</far>
           </clip>
-          <distortion>
-            <k1>0.00000001</k1>
-            <k2>0.00000001</k2>
-            <k3>0.00000001</k3>
-            <p1>0.00000001</p1>
-            <p2>0.00000001</p2>
-          </distortion>
+          <noise>
+            <type>gaussian</type>
+             Noise is sampled independently per pixel on each frame.
+                That pixel's noise value is added to each of its color
+                channels, which at that point lie in the range [0,1]. 
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+          <optical_frame_id>camera_frame</optical_frame_id>
+          <camera_info_topic>camera/camera_info</camera_info_topic>
         </camera>
-        <plugin name="depth_camera_controller" filename="libgazebo_ros_camera.so">
-          <ros>
-            <qos>
-              <topic name="/camera/camera_info">
-                <publisher>
-                  <reliability>best_effort</reliability>
-                </publisher>
-              </topic>
-              <topic name="/camera/image_raw">
-                <publisher>
-                  <reliability>best_effort</reliability>
-                </publisher>
-              </topic>
-              <topic name="/camera/image_raw/compressed">
-                <publisher>
-                  <reliability>best_effort</reliability>
-                </publisher>
-              </topic>
-              <topic name="/camera/image_raw/compressedDepth">
-                <publisher>
-                  <reliability>best_effort</reliability>
-                </publisher>
-              </topic>
-              <topic name="/camera/image_raw/theora">
-                <publisher>
-                  <reliability>best_effort</reliability>
-                </publisher>
-              </topic>
-              <topic name="/camera/points">
-                <publisher>
-                  <reliability>best_effort</reliability>
-                </publisher>
-              </topic>
-              <topic name="/camera/depth/camera_info">
-                <publisher>
-                  <reliability>best_effort</reliability>
-                </publisher>
-              </topic>
-              <topic name="/camera/depth/image_raw">
-                <publisher>
-                  <reliability>best_effort</reliability>
-                </publisher>
-              </topic>
-              <topic name="/camera/depth/image_raw/compressed">
-                <publisher>
-                  <reliability>best_effort</reliability>
-                </publisher>
-              </topic>
-              <topic name="/camera/depth/image_raw/compressedDepth">
-                <publisher>
-                  <reliability>best_effort</reliability>
-                </publisher>
-              </topic>
-              <topic name="/camera/depth/image_raw/theora">
-                <publisher>
-                  <reliability>best_effort</reliability>
-                </publisher>
-              </topic>
-            </qos>
-          </ros>
-          <frame_name>camera_frame</frame_name>
-          <min_depth>0.3</min_depth>
-          <max_depth>8.0</max_depth>
-        </plugin>
-      </sensor>
-    </gazebo>
+    </sensor>
 -->
+
+    <sensor name="rgbd_camera" type="rgbd_camera">
+      <camera>
+        <horizontal_fov>1.25</horizontal_fov>
+        <image>
+          <!-- Match 2D camera resolution to keep CameraInfo consistent -->
+          <width>640</width>
+          <height>480</height>
+        </image>
+        <clip>
+          <near>0.3</near>
+          <far>15</far>
+        </clip>
+        <optical_frame_id>camera_optical_frame</optical_frame_id>
+      </camera>
+      <always_on>true</always_on>
+      <update_rate>20</update_rate>
+      <visualize>true</visualize>
+  <!-- Use base-only topic; Gazebo will create subtopics: image, depth_image, camera_info, points -->
+  <topic>camera/camera_rgbd</topic>
+  <gz_frame_id>camera_frame</gz_frame_id>
+      <!-- Publish RGBD CameraInfo on its own topic to avoid collision with 2D camera info -->
+      <camera_info_topic>camera/camera_rgbd/camera_info</camera_info_topic>
+    </sensor>
+
+    </gazebo>
   </xacro:macro>
 </robot>

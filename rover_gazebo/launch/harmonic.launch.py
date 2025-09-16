@@ -125,7 +125,8 @@ def generate_launch_description():
             'gz_args': [PathJoinSubstitution([
                 pkg_project_gazebo,
                 'worlds',
-                'obstacle_course.sdf'
+                'shapes.sdf'
+#                'obstacle_course.sdf'
             ]), ' -r -v 4']
         }.items(),
     )
