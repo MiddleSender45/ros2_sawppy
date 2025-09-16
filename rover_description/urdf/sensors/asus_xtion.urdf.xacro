@@ -68,15 +68,16 @@
       </inertial>
     </link>
 
-    <!-- REP 103-compliant optical frame: Z forward, X right, Y down.
-         In this model, camera_frame is already oriented as optical; we add
-         an explicit camera_optical_frame with identity transform for standard naming. -->
-    <joint name="camera_optical_frame_joint" type="fixed">
-      <origin xyz="0 0 0" rpy="0 0 0" />
+    <!-- Frame dedicated for point cloud publishing. Based on observation: the
+         cloud appears rotated relative to the
+         optical frame. Create a child frame with that rotation so the point
+         cloud's header frame matches its data axes. -->
+    <joint name="camera_pointcloud_frame_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${math_pi_over_2} -${math_pi_over_2} 0" />
       <parent link="camera_frame" />
-      <child link="camera_optical_frame" />
+      <child link="camera_pointcloud_frame" />
     </joint>
-    <link name="camera_optical_frame">
+    <link name="camera_pointcloud_frame">
       <inertial>
         <mass value="0.0001" />
         <origin xyz="0 0 0" />
@@ -87,38 +88,6 @@
     </link>
 
     <gazebo reference="${prefix}_link">
-
-<!--
-      <sensor name="camera" type="camera">
-        <always_on>true</always_on>
-        <update_rate>20</update_rate>
-        <visualize>true</visualize>
-        <topic>camera/image</topic>
-        <camera>
-          <horizontal_fov>1.3962634</horizontal_fov>
-          <image>
-            <width>640</width>
-            <height>480</height>
-            <format>R8G8B8</format>
-          </image>
-          <clip>
-            <near>0.1</near>
-            <far>15</far>
-          </clip>
-          <noise>
-            <type>gaussian</type>
-             Noise is sampled independently per pixel on each frame.
-                That pixel's noise value is added to each of its color
-                channels, which at that point lie in the range [0,1]. 
-            <mean>0.0</mean>
-            <stddev>0.007</stddev>
-          </noise>
-          <optical_frame_id>camera_frame</optical_frame_id>
-          <camera_info_topic>camera/camera_info</camera_info_topic>
-        </camera>
-    </sensor>
--->
-
     <sensor name="rgbd_camera" type="rgbd_camera">
       <camera>
         <horizontal_fov>1.25</horizontal_fov>
@@ -131,15 +100,14 @@
           <near>0.3</near>
           <far>15</far>
         </clip>
-        <optical_frame_id>camera_optical_frame</optical_frame_id>
+        <optical_frame_id>camera_pointcloud_frame</optical_frame_id>
       </camera>
       <always_on>true</always_on>
       <update_rate>20</update_rate>
       <visualize>true</visualize>
-  <!-- Use base-only topic; Gazebo will create subtopics: image, depth_image, camera_info, points -->
-  <topic>camera/camera_rgbd</topic>
-  <gz_frame_id>camera_frame</gz_frame_id>
-      <!-- Publish RGBD CameraInfo on its own topic to avoid collision with 2D camera info -->
+      <topic>camera/camera_rgbd</topic>
+      <!-- Publish point cloud in the dedicated frame to correct orientation -->
+      <gz_frame_id>camera_pointcloud_frame</gz_frame_id>
       <camera_info_topic>camera/camera_rgbd/camera_info</camera_info_topic>
     </sensor>
 
