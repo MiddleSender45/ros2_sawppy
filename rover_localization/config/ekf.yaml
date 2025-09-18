@@ -71,9 +71,9 @@ ekf_filter_node:
         false,
 
         # lineal vel
-        true,
-        true,
-        true,
+        false,
+        false,
+        false,
 
         # angular vel
         true,
