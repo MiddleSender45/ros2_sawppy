@@ -38,7 +38,7 @@ from launch.event_handlers import OnProcessExit
 
 
 def generate_launch_description():
-    pkg_project_description = get_package_share_directory('rover_description')
+    pkg_rover_description = get_package_share_directory('rover_description')
 
 
     initial_pose_x = LaunchConfiguration("initial_pose_x")

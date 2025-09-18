@@ -94,6 +94,14 @@
         </plugin>
     </gazebo>
 
+    <!-- Ensure IMU system is loaded so IMU sensors publish data -->
+    <gazebo>
+        <plugin
+            filename="gz-sim-imu-system"
+            name="gz::sim::systems::Imu">
+        </plugin>
+    </gazebo>
+
 
   <ros2_control name="GazeboSystem" type="system">
         <hardware>

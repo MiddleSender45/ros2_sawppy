@@ -108,9 +108,9 @@ def generate_launch_description():
     ]
 
     remappings = [
-        ("rgb/image", "camera/image_raw"),
-        ("rgb/camera_info", "camera/camera_info"),
-        ("depth/image", "camera/depth/image_raw"),
+        ("rgb/image", "camera/rgb/image_raw"),
+        ("rgb/camera_info", "camera/rgb/camera_info"),
+        ("depth/image", "camera/depth/depth_image"),
         ("imu", "imu"),
         ("odom", "odom"),
         ("goal", "goal_pose"),

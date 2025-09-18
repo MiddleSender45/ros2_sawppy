@@ -32,11 +32,12 @@ from launch_ros.actions import Node
 def generate_launch_description():
 
     # Setup project paths
-    pkg_project_bringup = get_package_share_directory('rover_bringup')
-    pkg_project_gazebo = get_package_share_directory('rover_gazebo')
-    pkg_project_description = get_package_share_directory('rover_description')
+    pkg_rover_bringup = get_package_share_directory('rover_bringup')
+    pkg_rover_gazebo = get_package_share_directory('rover_gazebo')
+    pkg_rover_description = get_package_share_directory('rover_description')
+    pkg_rover_localization = get_package_share_directory('rover_localization')
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
-    rviz_config = os.path.join(pkg_project_gazebo, "rviz", "default.rviz")
+    rviz_config = os.path.join(pkg_rover_gazebo, "rviz", "default.rviz")
 
     ### ARGS ###
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')  
@@ -49,7 +50,7 @@ def generate_launch_description():
     world = LaunchConfiguration("world")
     world_cmd = DeclareLaunchArgument(
         "world",
-        default_value=os.path.join(pkg_project_gazebo, "worlds", "empty.world"),
+        default_value=os.path.join(pkg_rover_gazebo, "worlds", "empty.world"),
         description="Gazebo world",
     )
 
@@ -123,7 +124,7 @@ def generate_launch_description():
             os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
         launch_arguments={
             'gz_args': [PathJoinSubstitution([
-                pkg_project_gazebo,
+                pkg_rover_gazebo,
                 'worlds',
                 'shapes.sdf'
 #                'obstacle_course.sdf'
@@ -132,13 +133,13 @@ def generate_launch_description():
     )
 
     
-#    localization_cmd = IncludeLaunchDescription(
-#        PythonLaunchDescriptionSource(
-#            os.path.join(pkg_rover_localization, "launch", "localization.launch.py")
-#        ),
-#        launch_arguments={"use_sim_time": use_sim_time}.items(),
-#    )
-#
+    localization_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_rover_localization, "launch", "localization.launch.py")
+        ),
+        launch_arguments={"use_sim_time": use_sim_time}.items(),
+    )
+
 #    navigation_cmd = IncludeLaunchDescription(
 #        PythonLaunchDescriptionSource(
 #            os.path.join(pkg_rover_navigation, "launch", "bringup.launch.py")
@@ -149,7 +150,7 @@ def generate_launch_description():
 #            "controller": nav2_controller,
 #        }.items(),
 #    )
-#
+
     joy_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('teleop_twist_joy'), "launch", "teleop-launch.py")
@@ -161,13 +162,13 @@ def generate_launch_description():
 
     cmd_vel_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_project_gazebo, "launch/include", "cmd_vel.launch.py")
+            os.path.join(pkg_rover_gazebo, "launch/include", "cmd_vel.launch.py")
         ),
     )
 
     spawn_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_project_gazebo, "launch/include", "spawn.launch.py")
+            os.path.join(pkg_rover_gazebo, "launch/include", "spawn.launch.py")
         ),
         launch_arguments={
             "initial_pose_x": initial_pose_x,
@@ -193,7 +194,7 @@ def generate_launch_description():
 # One or the other of these can be uncommented to enable Nav2 or Teleop
     #ld.add_action(nav2_planner_cmd)
     #ld.add_action(nav2_controller_cmd)
-    #ld.add_action(localization_cmd)
+    ld.add_action(localization_cmd)
     #ld.add_action(navigation_cmd)
     ld.add_action(joy_cmd)
 

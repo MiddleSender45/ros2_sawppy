@@ -94,6 +94,7 @@ ControllerNode::ControllerNode() : rclcpp::Node("controller_node") {
           "motors_command", 10, std::bind(&ControllerNode::callback, this, _1));
 }
 
+// TODO - generate wheel odometry here, publish to /odom
 void ControllerNode::callback(
     const rover_msgs::msg::MotorsCommand::SharedPtr msg) {
   this->motor_controller->corner_to_position(msg->corner_motor);

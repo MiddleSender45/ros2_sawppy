@@ -32,7 +32,7 @@ from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
-    pkg_project_description = get_package_share_directory('rover_description')
+    pkg_rover_description = get_package_share_directory('rover_description')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')  
     use_sim_time_cmd = DeclareLaunchArgument(
@@ -44,7 +44,7 @@ def generate_launch_description():
     # Robot description
     robot_description = ParameterValue(
         Command(['xacro ', PathJoinSubstitution([
-            pkg_project_description,
+            pkg_rover_description,
             'models',
             'rover.urdf.xacro'
         ])]), value_type=str
