@@ -88,14 +88,60 @@
       <parent link="${prefix}_link_optical" />
       <child link="camera_pointcloud_frame" />
     </joint>
-
     <gazebo reference="${prefix}_link">
-    <sensor name="rgbd_camera" type="rgbd_camera">
+    <!-- RGB camera for RGB images and camera_info (optical frame)-->
+    <sensor name="rgb_camera" type="camera">
       <always_on>true</always_on>
       <update_rate>20</update_rate>
       <visualize>true</visualize>
-      <topic>camera/camera_rgbd</topic>
-      <camera_info_topic>camera/camera_rgbd/camera_info</camera_info_topic>
+      <topic>camera/rgb/image_raw</topic>
+      <camera>
+        <horizontal_fov>1.25</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.3</near>
+          <far>15</far>
+        </clip>
+        <optical_frame_id>${prefix}_link_optical</optical_frame_id>
+      </camera>
+    </sensor>
+
+    <!-- Depth camera for depth images (optical frame) 
+         Also publushes camera/depth/depth_image/points 
+         But it's mis-aligned - see 
+         https://github.com/gazebosim/gz-sensors/issues/29#issuecomment-3113732696
+         -->
+
+    <sensor name="depth_camera" type="depth_camera">
+      <always_on>true</always_on>
+      <update_rate>20</update_rate>
+      <visualize>true</visualize>
+      <topic>camera/depth/depth_image</topic>
+      <camera>
+        <horizontal_fov>1.25</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+        </image>
+        <clip>
+          <near>0.3</near>
+          <far>15</far>
+        </clip>
+        <optical_frame_id>${prefix}_link_optical</optical_frame_id>
+      </camera>
+    </sensor>
+
+    <!-- RGBD camera for pointcloud only (pointcloud frame) -->
+    <sensor name="pointcloud_camera" type="rgbd_camera">
+      <always_on>true</always_on>
+      <update_rate>20</update_rate>
+      <visualize>false</visualize>
+      <topic>camera/pointcloud</topic>
+      <!-- append /camera_info /depth_image /image /points -->
       <camera>
         <horizontal_fov>1.25</horizontal_fov>
         <image>
