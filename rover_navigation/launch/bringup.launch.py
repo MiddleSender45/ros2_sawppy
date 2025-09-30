@@ -44,9 +44,7 @@ def generate_launch_description():
     pkg_dir = get_package_share_directory("rover_navigation")
     launch_dir = os.path.join(pkg_dir, "launch")
 
-    stdout_linebuf_envvar = SetEnvironmentVariable(
-        "RCUTILS_LOGGING_BUFFERED_STREAM", "1"
-    )
+    stdout_linebuf_envvar = SetEnvironmentVariable("RCUTILS_LOGGING_BUFFERED_STREAM", "1")
 
     def run_nav2(context, planner, controller):
         planner = str(context.perform_substitution(planner))
