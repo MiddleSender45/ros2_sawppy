@@ -22,36 +22,28 @@
 
 #define BOOST_BIND_NO_PLACEHOLDERS
 
+#include "rover_gazebo/motors_command_parser_node.hpp"
+
 #include <vector>
 
 #include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/float64_multi_array.hpp"
-
-#include "rover_gazebo/motors_command_parser_node.hpp"
 #include "rover_msgs/msg/motors_command.hpp"
+#include "std_msgs/msg/float64_multi_array.hpp"
 
 using std::placeholders::_1;
 
-MotorsCommandParserNode::MotorsCommandParserNode()
-    : rclcpp::Node("motors_command_parser_node") {
-
+MotorsCommandParserNode::MotorsCommandParserNode() : rclcpp::Node("motors_command_parser_node") {
   this->velocity_publisher =
-      this->create_publisher<std_msgs::msg::Float64MultiArray>(
-          "velocity_controller/commands", 10);
+      this->create_publisher<std_msgs::msg::Float64MultiArray>("velocity_controller/commands", 10);
 
   this->position_publisher =
-      this->create_publisher<std_msgs::msg::Float64MultiArray>(
-          "position_controller/commands", 10);
+      this->create_publisher<std_msgs::msg::Float64MultiArray>("position_controller/commands", 10);
 
-  this->subscription =
-      this->create_subscription<rover_msgs::msg::MotorsCommand>(
-          "motors_command", 10,
-          std::bind(&MotorsCommandParserNode::callback, this, _1));
+  this->subscription = this->create_subscription<rover_msgs::msg::MotorsCommand>(
+      "motors_command", 10, std::bind(&MotorsCommandParserNode::callback, this, _1));
 }
 
-void MotorsCommandParserNode::callback(
-    const rover_msgs::msg::MotorsCommand::SharedPtr msg) {
-
+void MotorsCommandParserNode::callback(const rover_msgs::msg::MotorsCommand::SharedPtr msg) {
   // RCLCPP_INFO(this->get_logger(),
   //             "Speed: %d %d %d %d %d %d, Sterring: %d, %d, %d, %d",
   //             msg->drive_motor[0], msg->drive_motor[1], msg->drive_motor[2],
@@ -66,11 +58,7 @@ void MotorsCommandParserNode::callback(
   float pi = atan(1) * 4;
 
   for (long unsigned int i = 0; i < msg->drive_motor.size(); i++) {
-
-    float value =
-        this->normalize(-1000, 1000,
-                        this->clamp(-1000, 1000, msg->drive_motor[i])) *
-        20;
+    float value = this->normalize(-1000, 1000, this->clamp(-1000, 1000, msg->drive_motor[i])) * 20;
 
     if (i > 2) {
       value *= -1;
@@ -80,9 +68,8 @@ void MotorsCommandParserNode::callback(
   }
 
   for (int position : msg->corner_motor) {
-
-    corners_positions.data.push_back(
-        this->normalize(250, 750, this->clamp(-250, 750, position)) * -pi / 2);
+    corners_positions.data.push_back(this->normalize(250, 750, this->clamp(-250, 750, position)) *
+                                     -pi / 2);
   }
 
   // publish
@@ -94,8 +81,7 @@ int MotorsCommandParserNode::clamp(int range_min, int range_max, int value) {
   return std::min(range_max, std::max(range_min, value));
 }
 
-float MotorsCommandParserNode::normalize(int range_min, int range_max,
-                                         int value) {
+float MotorsCommandParserNode::normalize(int range_min, int range_max, int value) {
   return 2 * ((float)value - range_min) / (range_max - range_min) - 1;
 }
 
