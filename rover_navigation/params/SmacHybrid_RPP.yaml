@@ -39,7 +39,7 @@ bt_navigator:
       - nav2_round_robin_node_bt_node
       - nav2_transform_available_condition_bt_node
       - nav2_time_expired_condition_bt_node
-      - nav2_path_expiring_timer_condition
+      - nav2_path_expiring_timer_condition_bt_node
       - nav2_distance_traveled_condition_bt_node
       - nav2_single_trigger_bt_node
       - nav2_goal_updated_controller_bt_node
@@ -122,7 +122,7 @@ local_costmap:
     ros__parameters:
       update_frequency: 5.0
       publish_frequency: 2.0
-      global_frame: map
+      global_frame: odom
       robot_base_frame: base_link
       use_sim_time: True
       rolling_window: True

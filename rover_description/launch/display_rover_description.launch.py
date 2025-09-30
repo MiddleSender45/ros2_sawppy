@@ -3,6 +3,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 from ament_index_python.packages import get_package_share_directory
 
 
@@ -16,10 +17,13 @@ def generate_launch_description():
 
     # Generate robot_description from xacro
     xacro_file = os.path.join(pkg_rover_description, 'models', 'rover.urdf.xacro')
-    robot_description = Command([
-        'xacro ', xacro_file,
-        ' use_gazebo:=false'
-    ])
+    robot_description = ParameterValue(
+        Command([
+            'xacro ', xacro_file,
+            ' use_gazebo:=false'
+        ]),
+        value_type=str
+    )
 
     # Joint State Publisher GUI
     joint_state_publisher_gui_node = Node(
@@ -38,7 +42,7 @@ def generate_launch_description():
     )
 
     # RViz2
-    rviz_config_file = os.path.join(pkg_rover_description, 'config', 'default.rviz')
+    rviz_config_file = os.path.join(pkg_rover_description, 'config', 'display_rover_description.rviz')
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',

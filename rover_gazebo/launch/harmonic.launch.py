@@ -19,7 +19,8 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription
-from launch.conditions import IfCondition
+from launch.actions import TimerAction
+from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
@@ -36,6 +37,7 @@ def generate_launch_description():
     pkg_rover_gazebo = get_package_share_directory('rover_gazebo')
     pkg_rover_description = get_package_share_directory('rover_description')
     pkg_rover_localization = get_package_share_directory('rover_localization')
+    pkg_rover_navigation = get_package_share_directory('rover_navigation')
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
     rviz_config = os.path.join(pkg_rover_gazebo, "rviz", "default.rviz")
 
@@ -67,6 +69,12 @@ def generate_launch_description():
     launch_rviz = LaunchConfiguration("launch_rviz")
     launch_rviz_cmd = DeclareLaunchArgument(
         "launch_rviz", default_value="True", description="Whether launch rviz2"
+    )
+
+    # Allow disabling teleop to prevent cmd_vel conflicts with Nav2
+    use_teleop = LaunchConfiguration("use_teleop")
+    use_teleop_cmd = DeclareLaunchArgument(
+        "use_teleop", default_value="False", description="Whether to launch teleop_twist_joy"
     )
 
     initial_pose_x = LaunchConfiguration("initial_pose_x")
@@ -128,7 +136,8 @@ def generate_launch_description():
                 'worlds',
                 'shapes.sdf'
 #                'obstacle_course.sdf'
-            ]), ' -r -v 4']
+            ]), ' -r -v 4'],
+            'on_exit_shutdown': 'true',
         }.items(),
     )
 
@@ -140,16 +149,17 @@ def generate_launch_description():
         launch_arguments={"use_sim_time": use_sim_time}.items(),
     )
 
-#    navigation_cmd = IncludeLaunchDescription(
-#        PythonLaunchDescriptionSource(
-#            os.path.join(pkg_rover_navigation, "launch", "bringup.launch.py")
-#        ),
-#        launch_arguments={
-#            "use_sim_time": use_sim_time,
-#            "planner": nav2_planner,
-#            "controller": nav2_controller,
-#        }.items(),
-#    )
+    navigation_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_rover_navigation, "launch", "bringup.launch.py")
+        ),
+        launch_arguments={
+            "use_sim_time": use_sim_time,
+            "planner": nav2_planner,
+            "controller": nav2_controller,
+        }.items(),
+        condition=UnlessCondition(use_teleop)
+    )
 
     joy_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -158,6 +168,7 @@ def generate_launch_description():
         launch_arguments={
             "joy_config": "pdp"
         }.items(),
+        condition=IfCondition(use_teleop)
     )
 
     cmd_vel_cmd = IncludeLaunchDescription(
@@ -178,6 +189,11 @@ def generate_launch_description():
             "use_sim_time": use_sim_time,
         }.items(),
     )
+    spawn_cmd_delayed = TimerAction(
+        period=8.0,  # Increased delay to ensure Gazebo is fully ready
+        actions=[spawn_cmd]
+    )
+
 
     ld = LaunchDescription()
 
@@ -186,20 +202,22 @@ def generate_launch_description():
     ld.add_action(launch_gui_cmd)
     ld.add_action(pause_gz_cmd)
     ld.add_action(launch_rviz_cmd)
+    ld.add_action(use_teleop_cmd)
     ld.add_action(initial_pose_x_cmd)
     ld.add_action(initial_pose_y_cmd)
     ld.add_action(initial_pose_z_cmd)
     ld.add_action(initial_pose_yaw_cmd)
+    ld.add_action(nav2_planner_cmd)
+    ld.add_action(nav2_controller_cmd)
 
-# One or the other of these can be uncommented to enable Nav2 or Teleop
-    #ld.add_action(nav2_planner_cmd)
-    #ld.add_action(nav2_controller_cmd)
-    ld.add_action(localization_cmd)
-    #ld.add_action(navigation_cmd)
+    # One or the other of these can be enabled to avoid cmd_vel conflicts: Nav2 or Teleop
     ld.add_action(joy_cmd)
+    # nav2
+    ld.add_action(navigation_cmd)
 
+    # ld.add_action(localization_cmd)
     ld.add_action(gz_sim_cmd)
     ld.add_action(rviz_cmd)
     ld.add_action(cmd_vel_cmd)
-    ld.add_action(spawn_cmd)
+    ld.add_action(spawn_cmd_delayed)
     return ld

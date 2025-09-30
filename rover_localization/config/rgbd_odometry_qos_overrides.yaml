@@ -1,0 +1,46 @@
+rgbd_odometry:
+  ros__parameters:
+    qos_overrides:
+      # QoS settings for camera topics to match Gazebo's RELIABLE publishers
+      '/camera/rgb/image_raw':
+        subscriber:
+          reliability: reliable
+          history: keep_last
+          depth: 5
+          durability: volatile
+      
+      '/camera/rgb/camera_info':
+        subscriber:
+          reliability: reliable
+          history: keep_last
+          depth: 5
+          durability: volatile
+      
+      '/camera/depth/depth_image':
+        subscriber:
+          reliability: reliable
+          history: keep_last
+          depth: 5
+          durability: volatile
+      
+      '/camera/depth/camera_info':
+        subscriber:
+          reliability: reliable
+          history: keep_last
+          depth: 5
+          durability: volatile
+      
+      # Sensor data can remain best_effort
+      '/scan':
+        subscriber:
+          reliability: best_effort
+          history: keep_last
+          depth: 5
+          durability: volatile
+      
+      '/imu':
+        subscriber:
+          reliability: best_effort
+          history: keep_last
+          depth: 5
+          durability: volatile

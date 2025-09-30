@@ -23,21 +23,25 @@
 
 from launch import LaunchDescription
 from launch_ros.actions import Node
+from ament_index_python.packages import get_package_share_directory
+import os
 
 
 def generate_launch_description():
     parameters = [
         {
             "frame_id": "base_link",
+            "guess_frame_id": "odom",
             "subscribe_depth": True,
             "subscribe_rgb": True,
+            # Dealing with slow gazebo inputs
             "approx_sync": True,
-            "approx_sync_max_interval": 0.01,
+            "approx_sync_max_interval": 1.0,
+            "queue_size": 20,
+            "wait_for_transform_duration": 0.5,
             "publish_tf": False,
             "wait_imu_to_init": False,
             "publish_null_when_lost": False,
-            "qos": 2,
-            "qos_camera_info": 2,
             # 0=TORO, 1=g2o, 2=GTSAM and 3=Ceres
             "Optimizer/Strategy": "2",
             "Optimizer/GravitySigma": "0.0",
@@ -50,7 +54,9 @@ def generate_launch_description():
             "Odom/ParticleSize": "500",
             "Odom/GuessMotion": "true",
             "Odom/AlignWithGround": "false",
-            "OdomF2M/MaxSize": "5000",
+            "Odom/ImageDecimation": "2",
+            "Odom/MaxFeatures": "500",
+            "OdomF2M/MaxSize": "1000",
             "OdomF2M/ScanMaxSize": "5000",
             "GFTT/MinDistance": "7.0",
             "GFTT/QualityLevel": "0.001",
@@ -103,15 +109,21 @@ def generate_launch_description():
         ("odom", "odom_rgbd"),
     ]
 
+    config_dir = os.path.join(
+        get_package_share_directory("rover_localization"),
+        "config",
+        "rgbd_odometry_qos_overrides.yaml"
+    )
+
     return LaunchDescription(
         [
             Node(
                 package="rtabmap_odom",
                 executable="rgbd_odometry",
                 output="log",
-                parameters=parameters,
+                parameters=parameters + [config_dir],
                 remappings=remappings,
-                arguments=["--ros-args", "--log-level", "Error"],
+                arguments=["--ros-args", "--log-level", "Debug"],
             ),
         ]
     )

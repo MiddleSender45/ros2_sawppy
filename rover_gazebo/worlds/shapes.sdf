@@ -6,6 +6,12 @@
       <background>0.8 0.8 0.8</background>
     </scene>
 
+    <physics name="physics" type="bullet-featherstone">
+      <max_step_size>0.010</max_step_size>  <!-- 10ms = 100 Hz -->
+      <real_time_factor>0.5</real_time_factor>
+      <real_time_update_rate>100</real_time_update_rate>
+    </physics>
+
     <light type="directional" name="sun">
       <cast_shadows>true</cast_shadows>
       <pose>0 0 10 0 0 0</pose>
@@ -262,8 +268,7 @@
       filename="gz-sim-imu-system"
       name="gz::sim::systems::Imu">
   </plugin>
-
- </gazebo>
+</gazebo>
 
 </world>
 </sdf>

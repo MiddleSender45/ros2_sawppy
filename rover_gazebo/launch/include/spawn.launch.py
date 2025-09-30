@@ -93,6 +93,7 @@ def generate_launch_description():
             '--ros-args',
             '-p', f'config_file:={bridge_params}',   
         ],
+        parameters=[{"use_sim_time": use_sim_time}],
         output='screen',
     )
 
@@ -104,22 +105,14 @@ def generate_launch_description():
         ]
     )
 
-#    controller_manager_cmd = Node(
-#        package="controller_manager",
-#        executable="ros2_control_node",
-#        parameters=[
-#            # Add your robot description and controller config YAML here
-#            {"robot_description": robot_description},
-#            os.path.join(get_package_share_directory("rover_description"), "config", "control.yaml"),
-#        ],
-#        output="screen",
-#    )
+    # controller_manager is provided by gz_ros_control plugin when the robot is spawned
 
     joint_state_broadcaster_spawner = Node(
         name="joint_state_broadcaster_spawner",
         package="controller_manager",
         executable="spawner",
         arguments=["joint_state_broadcaster"],
+        parameters=[{"use_sim_time": use_sim_time}],
     )
 
     position_controller_spawner = Node(
@@ -134,6 +127,7 @@ def generate_launch_description():
 #            '--controller-ros-args',
 #            '-r /position_controller/tf_odometry:=/tf',
         ],
+        parameters=[{"use_sim_time": use_sim_time}],
     )
 
     velocity_controller_spawner = Node(
@@ -146,6 +140,7 @@ def generate_launch_description():
 #            "--controller-manager", "/controller_manager",
 #            "--controller-manager-timeout", "120",
         ],
+        parameters=[{"use_sim_time": use_sim_time}],
     )
 
     sequence_joint_state_broadcaster = RegisterEventHandler(
@@ -191,6 +186,7 @@ def generate_launch_description():
     ld.add_action(initial_pose_yaw_cmd)
     ld.add_action(use_sim_time_cmd)
 
+    ld.add_action(robot_state_publisher_cmd)
     ld.add_action(spawn_entity_cmd)
  # done via event handlers not directly.
  #   ld.add_action(joint_state_broadcaster_spawner)
@@ -202,6 +198,5 @@ def generate_launch_description():
     
     ld.add_action(start_gazebo_ros_bridge_cmd)  
 
-    ld.add_action(robot_state_publisher_cmd)
 
     return ld

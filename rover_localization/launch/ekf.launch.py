@@ -54,7 +54,7 @@ def generate_launch_description():
         executable="ekf_node",
         name="ekf_filter_node",
         output="log",
-        parameters=[configured_params],
+        parameters=[configured_params, {"use_sim_time": use_sim_time}],
         remappings=[("odometry/filtered", "/odom"), ("accel/filtered", "/accel")],
     )
 
