@@ -59,18 +59,18 @@ def generate_launch_description():
             os.path.join(
                 get_package_share_directory("teleop_twist_joy"),
                 "launch",
-                "teleop-launch.py"
+                "teleop-launch.py",
             )
         ),
-        launch_arguments={
-            "joy_config": "pdp"
-        }.items(),
+        launch_arguments={"joy_config": "pdp"}.items(),
     )
 
     rover_motor_controller_action_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
-                rover_motor_controller_shared_dir, "launch", "motor_controller.launch.py"
+                rover_motor_controller_shared_dir,
+                "launch",
+                "motor_controller.launch.py",
             )
         )
     )

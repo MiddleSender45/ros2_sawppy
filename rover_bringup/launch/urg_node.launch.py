@@ -43,7 +43,9 @@ def generate_launch_description():
                 default_value=[
                     launch.substitutions.TextSubstitution(
                         text=os.path.join(
-                            get_package_share_directory("urg_node"), "launch", "urg_node_"
+                            get_package_share_directory("urg_node"),
+                            "launch",
+                            "urg_node_",
                         )
                     ),
                     sensor_interface,

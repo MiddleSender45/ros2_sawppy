@@ -29,24 +29,21 @@ from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.actions import Node
 
 
-
 def generate_launch_description():
 
     # Setup project paths
-    pkg_rover_bringup = get_package_share_directory('rover_bringup')
-    pkg_rover_gazebo = get_package_share_directory('rover_gazebo')
-    pkg_rover_description = get_package_share_directory('rover_description')
-    pkg_rover_localization = get_package_share_directory('rover_localization')
-    pkg_rover_navigation = get_package_share_directory('rover_navigation')
-    pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
+    pkg_rover_bringup = get_package_share_directory("rover_bringup")
+    pkg_rover_gazebo = get_package_share_directory("rover_gazebo")
+    pkg_rover_description = get_package_share_directory("rover_description")
+    pkg_rover_localization = get_package_share_directory("rover_localization")
+    pkg_rover_navigation = get_package_share_directory("rover_navigation")
+    pkg_ros_gz_sim = get_package_share_directory("ros_gz_sim")
     rviz_config = os.path.join(pkg_rover_gazebo, "rviz", "default.rviz")
 
     ### ARGS ###
-    use_sim_time = LaunchConfiguration('use_sim_time', default='true')  
+    use_sim_time = LaunchConfiguration("use_sim_time", default="true")
     use_sim_time_cmd = DeclareLaunchArgument(
-        "use_sim_time",
-        default_value="true",
-        description="Use simulation time"
+        "use_sim_time", default_value="true", description="Use simulation time"
     )
 
     world = LaunchConfiguration("world")
@@ -74,7 +71,9 @@ def generate_launch_description():
     # Allow disabling teleop to prevent cmd_vel conflicts with Nav2
     use_teleop = LaunchConfiguration("use_teleop")
     use_teleop_cmd = DeclareLaunchArgument(
-        "use_teleop", default_value="False", description="Whether to launch teleop_twist_joy"
+        "use_teleop",
+        default_value="False",
+        description="Whether to launch teleop_twist_joy",
     )
 
     initial_pose_x = LaunchConfiguration("initial_pose_x")
@@ -113,14 +112,13 @@ def generate_launch_description():
         description="Nav2 controller (RPP or TEB)",
     )
 
-
     ### NODES ###
     rviz_cmd = Node(
-       package='rviz2',
-       executable='rviz2',
-       arguments=["-d", rviz_config, "--ros-args", "--log-level", "Error"],
-       parameters=[{"use_sim_time": use_sim_time}],
-       condition=IfCondition(launch_rviz)
+        package="rviz2",
+        executable="rviz2",
+        arguments=["-d", rviz_config, "--ros-args", "--log-level", "Error"],
+        parameters=[{"use_sim_time": use_sim_time}],
+        condition=IfCondition(launch_rviz),
     )
 
     ### LAUNCHS ###
@@ -129,19 +127,24 @@ def generate_launch_description():
     # TODO - split between client and server
     gz_sim_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
+            os.path.join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")
+        ),
         launch_arguments={
-            'gz_args': [PathJoinSubstitution([
-                pkg_rover_gazebo,
-                'worlds',
-                'shapes.sdf'
-#                'obstacle_course.sdf'
-            ]), ' -r -v 4'],
-            'on_exit_shutdown': 'true',
+            "gz_args": [
+                PathJoinSubstitution(
+                    [
+                        pkg_rover_gazebo,
+                        "worlds",
+                        "shapes.sdf",
+                        #                'obstacle_course.sdf'
+                    ]
+                ),
+                " -r -v 4",
+            ],
+            "on_exit_shutdown": "true",
         }.items(),
     )
 
-    
     localization_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_rover_localization, "launch", "localization.launch.py")
@@ -158,17 +161,19 @@ def generate_launch_description():
             "planner": nav2_planner,
             "controller": nav2_controller,
         }.items(),
-        condition=UnlessCondition(use_teleop)
+        condition=UnlessCondition(use_teleop),
     )
 
     joy_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('teleop_twist_joy'), "launch", "teleop-launch.py")
+            os.path.join(
+                get_package_share_directory("teleop_twist_joy"),
+                "launch",
+                "teleop-launch.py",
+            )
         ),
-        launch_arguments={
-            "joy_config": "pdp"
-        }.items(),
-        condition=IfCondition(use_teleop)
+        launch_arguments={"joy_config": "pdp"}.items(),
+        condition=IfCondition(use_teleop),
     )
 
     cmd_vel_cmd = IncludeLaunchDescription(
@@ -191,9 +196,8 @@ def generate_launch_description():
     )
     spawn_cmd_delayed = TimerAction(
         period=8.0,  # Increased delay to ensure Gazebo is fully ready
-        actions=[spawn_cmd]
+        actions=[spawn_cmd],
     )
-
 
     ld = LaunchDescription()
 

@@ -33,7 +33,8 @@ from launch.events import Shutdown
 def generate_launch_description():
 
     config_directory = os.path.join(
-        ament_index_python.packages.get_package_share_directory("rover_bringup"), "config"
+        ament_index_python.packages.get_package_share_directory("rover_bringup"),
+        "config",
     )
     params = os.path.join(config_directory, "ublox.yaml")
 

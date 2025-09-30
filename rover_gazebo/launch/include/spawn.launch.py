@@ -35,11 +35,8 @@ from launch.actions import RegisterEventHandler
 from launch.event_handlers import OnProcessExit
 
 
-
-
 def generate_launch_description():
-    pkg_rover_description = get_package_share_directory('rover_description')
-
+    pkg_rover_description = get_package_share_directory("rover_description")
 
     initial_pose_x = LaunchConfiguration("initial_pose_x")
     initial_pose_x_cmd = DeclareLaunchArgument(
@@ -61,11 +58,9 @@ def generate_launch_description():
         "initial_pose_yaw", default_value="0.0", description="Initial pose yaw"
     )
 
-    use_sim_time = LaunchConfiguration('use_sim_time')
+    use_sim_time = LaunchConfiguration("use_sim_time")
     use_sim_time_cmd = DeclareLaunchArgument(
-        "use_sim_time",
-        default_value="true",
-        description="Use simulation time"
+        "use_sim_time", default_value="true", description="Use simulation time"
     )
 
     ### NODES ###
@@ -73,28 +68,38 @@ def generate_launch_description():
         package="ros_gz_sim",
         executable="create",
         arguments=[
-            "-name", "rover",
-            "-topic", "robot_description",
-            "-x", initial_pose_x,
-            "-y", initial_pose_y,
-            "-z", initial_pose_z,
-            "-Y", initial_pose_yaw,
-            "-allow_renaming", "true"
+            "-name",
+            "rover",
+            "-topic",
+            "robot_description",
+            "-x",
+            initial_pose_x,
+            "-y",
+            initial_pose_y,
+            "-z",
+            initial_pose_z,
+            "-Y",
+            initial_pose_yaw,
+            "-allow_renaming",
+            "true",
         ],
         output="screen",
         parameters=[{"use_sim_time": use_sim_time}],
     )
 
-    bridge_params = os.path.join(get_package_share_directory("rover_gazebo"), "config", "rover_bridge.yaml"   )
+    bridge_params = os.path.join(
+        get_package_share_directory("rover_gazebo"), "config", "rover_bridge.yaml"
+    )
     start_gazebo_ros_bridge_cmd = Node(
-        package = 'ros_gz_bridge',
-        executable = 'parameter_bridge',
-        arguments = [
-            '--ros-args',
-            '-p', f'config_file:={bridge_params}',   
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        arguments=[
+            "--ros-args",
+            "-p",
+            f"config_file:={bridge_params}",
         ],
         parameters=[{"use_sim_time": use_sim_time}],
-        output='screen',
+        output="screen",
     )
 
     robot_controllers = PathJoinSubstitution(
@@ -121,11 +126,12 @@ def generate_launch_description():
         executable="spawner",
         arguments=[
             "position_controller",
-            '--param-file', robot_controllers,
-#            "--controller-manager", "/controller_manager",
-#            "--controller-manager-timeout", "120",
-#            '--controller-ros-args',
-#            '-r /position_controller/tf_odometry:=/tf',
+            "--param-file",
+            robot_controllers,
+            #            "--controller-manager", "/controller_manager",
+            #            "--controller-manager-timeout", "120",
+            #            '--controller-ros-args',
+            #            '-r /position_controller/tf_odometry:=/tf',
         ],
         parameters=[{"use_sim_time": use_sim_time}],
     )
@@ -136,32 +142,33 @@ def generate_launch_description():
         executable="spawner",
         arguments=[
             "velocity_controller",
-            '--param-file', robot_controllers,
-#            "--controller-manager", "/controller_manager",
-#            "--controller-manager-timeout", "120",
+            "--param-file",
+            robot_controllers,
+            #            "--controller-manager", "/controller_manager",
+            #            "--controller-manager-timeout", "120",
         ],
         parameters=[{"use_sim_time": use_sim_time}],
     )
 
     sequence_joint_state_broadcaster = RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=spawn_entity_cmd,
-                on_exit=[joint_state_broadcaster_spawner],
-            )
+        event_handler=OnProcessExit(
+            target_action=spawn_entity_cmd,
+            on_exit=[joint_state_broadcaster_spawner],
+        )
     )
 
     sequence_position_controller = RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=joint_state_broadcaster_spawner,
-                on_exit=[position_controller_spawner],
-            )
+        event_handler=OnProcessExit(
+            target_action=joint_state_broadcaster_spawner,
+            on_exit=[position_controller_spawner],
+        )
     )
 
     sequence_velocity_controller = RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=joint_state_broadcaster_spawner,
-                on_exit=[velocity_controller_spawner],
-            )
+        event_handler=OnProcessExit(
+            target_action=joint_state_broadcaster_spawner,
+            on_exit=[velocity_controller_spawner],
+        )
     )
 
     ### LAUNCH ###
@@ -173,9 +180,7 @@ def generate_launch_description():
                 "robot_state_publisher.launch.py",
             )
         ),
-        launch_arguments={
-            "use_sim_time": use_sim_time
-        }.items(),
+        launch_arguments={"use_sim_time": use_sim_time}.items(),
     )
 
     ld = LaunchDescription()
@@ -188,15 +193,14 @@ def generate_launch_description():
 
     ld.add_action(robot_state_publisher_cmd)
     ld.add_action(spawn_entity_cmd)
- # done via event handlers not directly.
- #   ld.add_action(joint_state_broadcaster_spawner)
- #   ld.add_action(position_controller_spawner)
- #   ld.add_action(velocity_controller_spawner)
+    # done via event handlers not directly.
+    #   ld.add_action(joint_state_broadcaster_spawner)
+    #   ld.add_action(position_controller_spawner)
+    #   ld.add_action(velocity_controller_spawner)
     ld.add_action(sequence_joint_state_broadcaster)
     ld.add_action(sequence_position_controller)
     ld.add_action(sequence_velocity_controller)
-    
-    ld.add_action(start_gazebo_ros_bridge_cmd)  
 
+    ld.add_action(start_gazebo_ros_bridge_cmd)
 
     return ld

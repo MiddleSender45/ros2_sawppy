@@ -32,22 +32,24 @@ from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
-    pkg_rover_description = get_package_share_directory('rover_description')
+    pkg_rover_description = get_package_share_directory("rover_description")
 
-    use_sim_time = LaunchConfiguration('use_sim_time', default='true')  
+    use_sim_time = LaunchConfiguration("use_sim_time", default="true")
     use_sim_time_cmd = DeclareLaunchArgument(
-        "use_sim_time",
-        default_value="true",
-        description="Use simulation time"
+        "use_sim_time", default_value="true", description="Use simulation time"
     )
 
     # Robot description
     robot_description = ParameterValue(
-        Command(['xacro ', PathJoinSubstitution([
-            pkg_rover_description,
-            'models',
-            'rover.urdf.xacro'
-        ])]), value_type=str
+        Command(
+            [
+                "xacro ",
+                PathJoinSubstitution(
+                    [pkg_rover_description, "models", "rover.urdf.xacro"]
+                ),
+            ]
+        ),
+        value_type=str,
     )
 
     robot_state_publisher_cmd = Node(
@@ -55,11 +57,13 @@ def generate_launch_description():
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="screen",
-        parameters=[{
-            'use_sim_time': use_sim_time,
-            'robot_description': robot_description,
-            'publish_frequency': 50.0,
-        }]
+        parameters=[
+            {
+                "use_sim_time": use_sim_time,
+                "robot_description": robot_description,
+                "publish_frequency": 50.0,
+            }
+        ],
     )
 
     ld = LaunchDescription()

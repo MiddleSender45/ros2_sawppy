@@ -88,7 +88,9 @@ class VelParserNode(Node):
         # pubs and subs
         self.publisher = self.create_publisher(MotorsCommand, "motors_command", 10)
 
-        self.subscription = self.create_subscription(Twist, "cmd_vel", self.callback, 10)
+        self.subscription = self.create_subscription(
+            Twist, "cmd_vel", self.callback, 10
+        )
 
     def callback(self, msg: Twist) -> None:
         """

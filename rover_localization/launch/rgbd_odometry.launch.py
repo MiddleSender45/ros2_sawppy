@@ -112,7 +112,7 @@ def generate_launch_description():
     config_dir = os.path.join(
         get_package_share_directory("rover_localization"),
         "config",
-        "rgbd_odometry_qos_overrides.yaml"
+        "rgbd_odometry_qos_overrides.yaml",
     )
 
     return LaunchDescription(
