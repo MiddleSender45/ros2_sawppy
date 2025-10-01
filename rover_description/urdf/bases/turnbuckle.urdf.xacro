@@ -56,13 +56,15 @@
                         velocity="30.0" />
                     <parent link="diff_brace_link" />
                     <child link="${lat_label}_turnbuckle_link" />
+                    <!-- This makes sense for display_rover_description, but not simulation -->
+                    <!--
                     <xacro:if value="${lat_label == 'left'}">
                       <mimic joint="right_rocker_joint" multiplier="0.35" offset="0.0"/>
                     </xacro:if>
                     <xacro:if value="${lat_label == 'right'}">
                       <mimic joint="right_rocker_joint" multiplier="-0.35" offset="0.0"/>
                     </xacro:if>
-                      <!-- <mimic joint="diff_brace_joint" multiplier="-2.87" offset="0.0"/> -->
+                    -->
                 </joint>
     <gazebo>
                 <!--

@@ -60,7 +60,10 @@
             <parent link="${parent}" />
             <child link="diff_brace_link" />
             <dynamics damping="1.0" friction="1.0"/>
+            <!-- This makes sense for display_rover_description, but not simulation -->
+            <!--
             <mimic joint="right_rocker_joint" multiplier="0.35" offset="0.0"/>
+            -->
         </joint>
     </xacro:macro>
 </robot>

@@ -16,7 +16,8 @@
     <!-- TODO: figure out how to set this to false when not in simulation - we don't seem to be running 
                robot_state_publisher on the real robot? -->
     <!-- do we even need this since we set it to default to true in rocker & turnbuckle? -->
-    <xacro:property name="use_gazebo" value="true"/>
+    <xacro:arg name="use_gazebo" default="true"/>
+    <xacro:property name="use_gazebo" value="$(arg use_gazebo)"/>
 
     <!-- The base link -->
     <link name="base_link">
@@ -35,12 +36,12 @@
     <!-- body -->
     <xacro:body parent="base_link" />
     <xacro:differential parent="base_link" />
-    <xacro:turnbuckle lat_label="left" reflect="1"/>
-    <xacro:turnbuckle lat_label="right" reflect="-1"/>
-    <xacro:rocker parent="base_link" lat_label="left" reflect="1"/>
-    <xacro:rocker parent="base_link" lat_label="right" reflect="-1"/>
-    <xacro:bogie lat_label="left" reflect="1"/>
-    <xacro:bogie lat_label="right" reflect="-1"/>
+    <xacro:turnbuckle lat_label="left" reflect="1" use_gazebo="${use_gazebo}"/>
+    <xacro:turnbuckle lat_label="right" reflect="-1" use_gazebo="${use_gazebo}"/>
+    <xacro:rocker parent="base_link" lat_label="left" reflect="1" use_gazebo="${use_gazebo}"/>
+    <xacro:rocker parent="base_link" lat_label="right" reflect="-1" use_gazebo="${use_gazebo}"/>
+    <xacro:bogie lat_label="left" reflect="1" use_gazebo="${use_gazebo}" />
+    <xacro:bogie lat_label="right" reflect="-1" use_gazebo="${use_gazebo}" />
     <xacro:sensor_hokuyo prefix="laser" parent="base_link" min_angle="-1.0" max_angle="1.0">
         <origin xyz="0.17 0 0.005" rpy="0 0 0"/>
     </xacro:sensor_hokuyo>
@@ -91,6 +92,13 @@
             <joint_name>front_right_corner_joint</joint_name>
             <joint_name>back_left_corner_joint</joint_name>
             <joint_name>back_right_corner_joint</joint_name>
+
+            <joint_name>front_left_wheel_joint</joint_name>
+            <joint_name>front_right_wheel_joint</joint_name>
+            <joint_name>mid_left_wheel_joint</joint_name>
+            <joint_name>mid_right_wheel_joint</joint_name>
+            <joint_name>back_left_wheel_joint</joint_name>
+            <joint_name>back_right_wheel_joint</joint_name>
         </plugin>
     </gazebo>
 

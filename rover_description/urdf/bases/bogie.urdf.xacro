@@ -26,7 +26,8 @@
     <xacro:property name="bogie_box_depth" value="0.10" />
     <xacro:property name="bogie_box_mass" value="0.25" />
     <xacro:include filename="$(find rover_description)/urdf/inertials.xacro"/>
-    <xacro:macro name="bogie" params="lat_label reflect">
+
+    <xacro:macro name="bogie" params="lat_label reflect use_gazebo:=true">
         <!-- link -->
         <link name="${lat_label}_bogie_link">
             <visual>
@@ -51,8 +52,8 @@
         <gazebo reference="${lat_label}_bogie_link">
             <material name="white" />
         </gazebo>
-        <!-- joint -->
-        <joint name="${lat_label}_bogie_joint" type="revolute">
+        <!-- joint - fixed in gazebo, revolute if outside -->
+        <joint name="${lat_label}_bogie_joint" type="${'fixed' if use_gazebo else 'revolute'}">
             <origin rpy="0 0 0" xyz="-0.181 ${reflect * 0.025} -0.062"/>
             <axis xyz="0 1 0" />
             <limit 

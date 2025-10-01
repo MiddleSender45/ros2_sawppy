@@ -54,28 +54,30 @@
             <material name="white" />
         </gazebo>
         <!-- should be fixed for gazebo simulation, continuous for actual rover -->
-        <joint name="${lat_label}_rocker_joint" type="revolute"> <!-- fixed -->
+        <joint name="${lat_label}_rocker_joint" type="${'fixed' if use_gazebo else 'revolute'}">
             <origin rpy="0 0 0" xyz="0.071 ${reflect * 0.155} 0.0118"/>
             <axis xyz="0 1 0" />
             <limit 
-                lower="-0.3"
-                upper="0.3"
-                effort="0.0"
-                velocity="0.0" />
+            lower="-0.3"
+            upper="0.3"
+            effort="0.0"
+            velocity="0.0" />
             <parent link="${parent}" />
             <child link="${lat_label}_rocker_link" />
             <dynamics damping="0.05" friction="0.0"/>
 
+            <!-- This makes sense for display_rover_description, but not simulation -->
             <!-- Outside (i.e. RVIZ), you can make the rocker joints mimic the differential bar.  
                  In the Actual rover, this is done by the turnbuckles attached to the differential bar -->
                  <!-- dist between center of rover and top end turnbuckle= 166.5 mm -->
                  <!-- dist between pivot of rocker and other end of turnbuckle = 58 mm -->
+            <!--     
             <xacro:if value="${use_gazebo}">
               <xacro:if value="${lat_label == 'left'}">
                 <mimic joint="right_rocker_joint" multiplier="-1" offset="0.0"/>
               </xacro:if>
-                <!-- <mimic joint="diff_brace_joint" multiplier="-2.87" offset="0.0"/> -->
             </xacro:if>
+            -->
 
         </joint>
 
