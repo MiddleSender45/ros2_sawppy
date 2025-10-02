@@ -53,9 +53,9 @@ def generate_launch_description():
             "approx_sync": True,
             "publish_tf": True,
             "use_sim_time": use_sim_time,
-            "qos_image": "sensor_data",  # need at least humble (else 2)
-            "qos_camera_info": "sensor_data",
-            "qos_imu": "sensor_data",
+            "qos_image": 2, # "sensor_data",  # need at least humble (else 2)
+            "qos_camera_info": 2, # "sensor_data",
+            "qos_imu": 2, # "sensor_data",
             # 0=TORO, 1=g2o, 2=GTSAM and 3=Ceres
             "Optimizer/Strategy": "2",
             "Optimizer/GravitySigma": "0.0",

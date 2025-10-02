@@ -90,6 +90,69 @@ def generate_launch_description():
     bridge_params = os.path.join(
         get_package_share_directory("rover_gazebo"), "config", "rover_bridge.yaml"
     )
+    
+    # QoS overrides for sensor topics to use best_effort
+    bridge_qos_overrides = {
+        "qos_overrides": {
+            "/camera/rgb/image_raw": {
+                "publisher": {
+                    "reliability": "best_effort",
+                    "history": "keep_last",
+                    "depth": 1,
+                    "durability": "volatile"
+                }
+            },
+            "/camera/rgb/camera_info": {
+                "publisher": {
+                    "reliability": "best_effort",
+                    "history": "keep_last",
+                    "depth": 1,
+                    "durability": "volatile"
+                }
+            },
+            "/camera/depth/depth_image": {
+                "publisher": {
+                    "reliability": "best_effort",
+                    "history": "keep_last",
+                    "depth": 1,
+                    "durability": "volatile"
+                }
+            },
+            "/camera/depth/camera_info": {
+                "publisher": {
+                    "reliability": "best_effort",
+                    "history": "keep_last",
+                    "depth": 1,
+                    "durability": "volatile"
+                }
+            },
+            "/imu": {
+                "publisher": {
+                    "reliability": "best_effort",
+                    "history": "keep_last",
+                    "depth": 1,
+                    "durability": "volatile"
+                }
+            },
+            "/scan": {
+                "publisher": {
+                    "reliability": "best_effort",
+                    "history": "keep_last",
+                    "depth": 1,
+                    "durability": "volatile"
+                }
+            },
+            "/joint_states": {
+                "publisher": {
+                    "reliability": "best_effort",
+                    "history": "keep_last",
+                    "depth": 1,
+                    "durability": "volatile"
+                }
+            }
+        }
+    }
+    
     start_gazebo_ros_bridge_cmd = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
@@ -98,7 +161,7 @@ def generate_launch_description():
             "-p",
             f"config_file:={bridge_params}",
         ],
-        parameters=[{"use_sim_time": use_sim_time}],
+        parameters=[{"use_sim_time": use_sim_time}, bridge_qos_overrides],
         output="screen",
     )
 
