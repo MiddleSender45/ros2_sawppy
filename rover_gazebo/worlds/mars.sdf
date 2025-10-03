@@ -1,0 +1,129 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="shapes">
+    <scene>
+      <ambient>1.0 1.0 1.0</ambient>
+      <background>0.8 0.8 0.8</background>
+    </scene>
+
+    <physics name="physics" type="bullet-featherstone">
+      <max_step_size>0.01</max_step_size>  <!-- 10ms = 100 Hz - high precision for capable hardware -->
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>100</real_time_update_rate>
+    </physics>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+<!--
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>1 1</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>1 1</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.545 0.271 0.075 1</ambient>
+            <diffuse>0.545 0.271 0.075 1</diffuse>
+            <specular>0.2 0.1 0.05 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+-->
+
+<include>
+    <uri> https://fuel.gazebosim.org/1.0/jasmeetsingh/models/Mars Gale Crater Patch 1 </uri>
+    <name>mars_gale_crater_patch_1</name>
+       <!-- x y z r p y -->
+    <pose>0 0 -3.3 0.2 0.01 0.0</pose>
+</include>
+
+
+<include>
+    <uri> https://fuel.gazebosim.org/1.0/OpenRobotics/models/Falling Rock 1 </uri>
+    <name>rockformation</name>
+    <pose>3.07 -3.78 0.46 0 0 1.75</pose>
+</include>
+
+<include>
+    <uri> https://fuel.gazebosim.org/1.0/OpenRobotics/models/Falling Rock 2 </uri>
+    <name>rockformation2</name>
+    <pose>-1.14 3.92 0.42 3.141593 -0.008 1.7915</pose>
+</include>
+
+<include>
+    <uri> https://fuel.gazebosim.org/1.0/OpenRobotics/models/Falling Rock 3 </uri>
+    <name>rockformation3</name>
+    <pose>4.6 2.11 0.25 0 0 0</pose>
+</include>
+
+<include>
+    <uri> https://fuel.gazebosim.org/1.0/OpenRobotics/models/Falling Rock 4 </uri>
+    <name>rockformation4</name>
+      <pose>-3.05 -2.83 0.37 0 0 0</pose>
+</include>
+
+<!--
+<include>
+    <uri> https://fuel.gazebosim.org/1.0/jasmeetsingh/models/Mars Gale Crater Patch 2 </uri>
+    <name>mars_gale_crater_patch_2</name>
+    <pose>0 0 0 0 0 0</pose>
+</include>
+-->
+
+
+<!-- Plugins Section -->
+
+<gazebo>
+  <!-- <plugin
+      filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
+  </plugin> -->
+
+  <plugin
+      filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+  </plugin>
+
+  <plugin
+      filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+  </plugin>
+
+  <plugin
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+  </plugin>
+
+  <plugin
+      filename="gz-sim-imu-system"
+      name="gz::sim::systems::Imu">
+  </plugin>
+</gazebo>
+
+</world>
+</sdf>
