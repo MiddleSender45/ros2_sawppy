@@ -34,7 +34,7 @@ def generate_launch_description():
     parameters = [
         {
             "frame_id": "base_link",
-            #"guess_frame_id": "odom",
+            # "guess_frame_id": "odom",
             "guess_frame_id": "",
             "subscribe_depth": True,
             "subscribe_rgb": True,
@@ -106,7 +106,6 @@ def generate_launch_description():
             "Vis/CorNNType": "3",
             "Vis/CorNNK": "2",
             "Vis/CorNNDr": "0.8",
-
         }
     ]
 
@@ -127,7 +126,7 @@ def generate_launch_description():
     use_sim_time_arg = DeclareLaunchArgument(
         "use_sim_time",
         default_value="true",
-        description="Use simulation (Gazebo) clock if true"
+        description="Use simulation (Gazebo) clock if true",
     )
 
     use_sim_time = LaunchConfiguration("use_sim_time")

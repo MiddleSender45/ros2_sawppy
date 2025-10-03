@@ -90,7 +90,7 @@ def generate_launch_description():
     bridge_params = os.path.join(
         get_package_share_directory("rover_gazebo"), "config", "rover_bridge.yaml"
     )
-    
+
     # QoS overrides for sensor topics to use best_effort
     bridge_qos_overrides = {
         "qos_overrides": {
@@ -99,7 +99,7 @@ def generate_launch_description():
                     "reliability": "best_effort",
                     "history": "keep_last",
                     "depth": 1,
-                    "durability": "volatile"
+                    "durability": "volatile",
                 }
             },
             "/camera/rgb/camera_info": {
@@ -107,7 +107,7 @@ def generate_launch_description():
                     "reliability": "best_effort",
                     "history": "keep_last",
                     "depth": 1,
-                    "durability": "volatile"
+                    "durability": "volatile",
                 }
             },
             "/camera/depth/depth_image": {
@@ -115,7 +115,7 @@ def generate_launch_description():
                     "reliability": "best_effort",
                     "history": "keep_last",
                     "depth": 1,
-                    "durability": "volatile"
+                    "durability": "volatile",
                 }
             },
             "/camera/depth/camera_info": {
@@ -123,7 +123,7 @@ def generate_launch_description():
                     "reliability": "best_effort",
                     "history": "keep_last",
                     "depth": 1,
-                    "durability": "volatile"
+                    "durability": "volatile",
                 }
             },
             "/imu": {
@@ -131,7 +131,7 @@ def generate_launch_description():
                     "reliability": "best_effort",
                     "history": "keep_last",
                     "depth": 1,
-                    "durability": "volatile"
+                    "durability": "volatile",
                 }
             },
             "/scan": {
@@ -139,7 +139,7 @@ def generate_launch_description():
                     "reliability": "best_effort",
                     "history": "keep_last",
                     "depth": 1,
-                    "durability": "volatile"
+                    "durability": "volatile",
                 }
             },
             "/joint_states": {
@@ -147,12 +147,12 @@ def generate_launch_description():
                     "reliability": "best_effort",
                     "history": "keep_last",
                     "depth": 1,
-                    "durability": "volatile"
+                    "durability": "volatile",
                 }
-            }
+            },
         }
     }
-    
+
     start_gazebo_ros_bridge_cmd = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",

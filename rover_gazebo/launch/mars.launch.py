@@ -34,10 +34,10 @@ def generate_launch_description():
 
     gazebo_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_path, "launch", "gazebo.launch.py")
+            os.path.join(pkg_path, "launch", "harmonic.launch.py")
         ),
         launch_arguments={
-            "world": os.path.join(pkg_path, "worlds", "mars.world"),
+            "world": os.path.join(pkg_path, "worlds", "mars.sdf"),
             "initial_pose_z": "-0.45",
         }.items(),
     )

@@ -53,9 +53,10 @@ def generate_launch_description():
 
     launch_gui = LaunchConfiguration("launch_gui")
     launch_gui_cmd = DeclareLaunchArgument(
-        "launch_gui", default_value="True", description="Whether launch gzclient"
+        "launch_gui", default_value="False", description="Whether launch gazebo client"
     )
 
+    # Note - this causes issues with spawn timing, so not enabled by default
     pause_gz = LaunchConfiguration("pause_gz")
     pause_gz_cmd = DeclareLaunchArgument(
         "pause_gz", default_value="False", description="Whether to pause gazebo"
@@ -66,12 +67,20 @@ def generate_launch_description():
         "launch_rviz", default_value="True", description="Whether launch rviz2"
     )
 
-    # Allow disabling teleop to prevent cmd_vel conflicts with Nav2
+    # Allow disabling teleop 
     use_teleop = LaunchConfiguration("use_teleop")
     use_teleop_cmd = DeclareLaunchArgument(
         "use_teleop",
-        default_value="False",
+        default_value="True",
         description="Whether to launch teleop_twist_joy",
+    )
+
+    # Allow starting autonomous navigation.
+    use_nav = LaunchConfiguration("use_nav")
+    use_nav_cmd = DeclareLaunchArgument(
+        "use_nav",
+        default_value="True",
+        description="Whether to launch nav nodes",
     )
 
     initial_pose_x = LaunchConfiguration("initial_pose_x")
@@ -124,7 +133,7 @@ def generate_launch_description():
         [
             pkg_rover_gazebo,
             "worlds",
-            "mars.sdf",
+            "shapes.sdf",
         ]
     )
 
@@ -178,7 +187,7 @@ def generate_launch_description():
             "planner": nav2_planner,
             "controller": nav2_controller,
         }.items(),
-        condition=UnlessCondition(use_teleop),
+        condition=IfCondition(use_nav),
     )
 
     joy_cmd = IncludeLaunchDescription(
@@ -234,7 +243,7 @@ def generate_launch_description():
     # One or the other of these can be enabled to avoid cmd_vel conflicts: Nav2 or Teleop
     ld.add_action(joy_cmd)
     # nav2
-    # ld.add_action(navigation_cmd)
+    ld.add_action(navigation_cmd)
 
     ld.add_action(localization_cmd)
     ld.add_action(gz_sim_cmd_gui)
