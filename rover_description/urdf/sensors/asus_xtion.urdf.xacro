@@ -69,32 +69,25 @@
       <child link="${prefix}_link_optical" />
     </joint>
 
-    <!-- Frame dedicated for point cloud publishing. Based on observation: the
-         cloud appears rotated relative to th
-         optical frame. Create a child frame with that rotation so the point
-         cloud's header frame matches its data axes. -->
-    <link name="${prefix}_pointcloud_frame">
-      <inertial>
-        <mass value="0.0001" />
-        <origin xyz="0 0 0" />
-        <inertia ixx="1e-6" ixy="0.0" ixz="0.0"
-          iyy="1e-6" iyz="0.0"
-          izz="1e-6" />
-      </inertial>
-    </link>
-    <joint name="camera_pointcloud_frame_joint" type="fixed">
-      <!-- Rotate +90deg about Y so optical +Z -> pointcloud +X -->
-      <origin xyz="0 0 0" rpy="0 -${math_pi_over_2} ${math_pi_over_2}" />
-      <parent link="${prefix}_link_optical" />
-      <child link="camera_pointcloud_frame" />
-    </joint>
+    <!-- RGBD camera  -->
+    
+        <!-- RGBD camera also publishes camera/depth/depth_image/points 
+         The point cloud is mis-aligned - see 
+         https://github.com/gazebosim/gz-sensors/issues/29#issuecomment-3113732696
+         Leaving this comment in case it becomes important later.
+
+         If you look in the commit history, I added a second camera just for 
+         points that aligned the point cloud properly (according to rviz2), but 
+         collapsed to a single camera when optimizing for performance.
+         It was camera_pointcloud_frame.
+         -->
     <gazebo reference="${prefix}_link">
-    <!-- RGB camera for RGB images and camera_info (optical frame)-->
-    <sensor name="rgb_camera" type="camera">
+    <sensor name="rgbd_camera" type="rgbd_camera">
       <always_on>true</always_on>
-      <update_rate>30</update_rate>
+      <update_rate>10</update_rate>
       <visualize>false</visualize>
-      <topic>camera/rgb/image_raw</topic>
+      <topic>camera/rgbd</topic>
+      <!-- append /camera_info /depth_image /image /points -->
       <camera>
         <horizontal_fov>1.25</horizontal_fov>
         <image>
@@ -106,53 +99,14 @@
           <near>0.3</near>
           <far>15</far>
         </clip>
-        <optical_frame_id>${prefix}_link_optical</optical_frame_id>
-      </camera>
-    </sensor>
-
-    <!-- Depth camera for depth images (optical frame) 
-         Also publushes camera/depth/depth_image/points 
-         But it's mis-aligned - see 
-         https://github.com/gazebosim/gz-sensors/issues/29#issuecomment-3113732696
-         -->
-
-    <sensor name="depth_camera" type="depth_camera">
-      <always_on>true</always_on>
-      <update_rate>30</update_rate>
-      <visualize>false</visualize>
-      <topic>camera/depth/depth_image</topic>
-      <camera>
-        <horizontal_fov>1.25</horizontal_fov>
-        <image>
-          <width>640</width>
-          <height>480</height>
-        </image>
+        <depth_camera>
         <clip>
           <near>0.3</near>
           <far>15</far>
         </clip>
+        </depth_camera>
+        <!-- <optical_frame_id>${prefix}_rgbd_frame</optical_frame_id> -->
         <optical_frame_id>${prefix}_link_optical</optical_frame_id>
-      </camera>
-    </sensor>
-
-    <!-- RGBD camera for pointcloud only (pointcloud frame) -->
-    <sensor name="pointcloud_camera" type="rgbd_camera">
-      <always_on>true</always_on>
-      <update_rate>30</update_rate>
-      <visualize>false</visualize>
-      <topic>camera/pointcloud</topic>
-      <!-- append /camera_info /depth_image /image /points -->
-      <camera>
-        <horizontal_fov>1.25</horizontal_fov>
-        <image>
-          <width>640</width>
-          <height>480</height>
-        </image>
-        <clip>
-          <near>0.3</near>
-          <far>15</far>
-        </clip>
-        <optical_frame_id>${prefix}_pointcloud_frame</optical_frame_id>
       </camera>
     </sensor>
     </gazebo>

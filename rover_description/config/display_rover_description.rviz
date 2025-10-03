@@ -104,7 +104,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        camera_pointcloud_frame:
+        camera_rgbd_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false

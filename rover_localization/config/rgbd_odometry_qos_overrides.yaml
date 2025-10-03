@@ -1,28 +1,21 @@
 rgbd_odometry:
   ros__parameters:
     qos_overrides:
-      "/camera/rgb/image_raw":
+      '/camera/rgbd/camera_info':
+        subscription:
+          reliability: best_effort
+          history: keep_last
+          depth: 1
+          durability: volatile
+
+      "/camera/rgbd/image":
         subscription:
           reliability: best_effort
           history: keep_last
           depth: 1
           durability: volatile
       
-      "/camera/rgb/camera_info":
-        subscription:
-          reliability: best_effort
-          history: keep_last
-          depth: 1
-          durability: volatile
-      
-      "/camera/depth/depth_image":
-        subscription:
-          reliability: best_effort
-          history: keep_last
-          depth: 1
-          durability: volatile
-      
-      '/camera/depth/camera_info':
+      '/camera/rgbd/depth_image':
         subscription:
           reliability: best_effort
           history: keep_last

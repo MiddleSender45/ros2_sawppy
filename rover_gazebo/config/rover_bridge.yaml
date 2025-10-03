@@ -43,63 +43,28 @@
   gz_type_name: "gz.msgs.PointCloudPacked"
   direction: GZ_TO_ROS
 
-# gz topic published by RGB Camera
-- ros_topic_name: "camera/rgb/image_raw"
-  gz_topic_name: "camera/rgb/image_raw"
+# gz topic published by RGBD Camera
+
+- ros_topic_name: "camera/rgbd/image"
+  gz_topic_name: "camera/rgbd/image"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "gz.msgs.Image"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "camera/rgb/camera_info"
-  gz_topic_name: "camera/rgb/camera_info"
-  ros_type_name: "sensor_msgs/msg/CameraInfo"
-  gz_type_name: "gz.msgs.CameraInfo"
-  direction: GZ_TO_ROS
-
-# gz topic published by Depth Camera
-- ros_topic_name: "camera/depth/depth_image"
-  gz_topic_name: "camera/depth/depth_image"
+- ros_topic_name: "camera/rgbd/depth_image"
+  gz_topic_name: "camera/rgbd/depth_image"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "gz.msgs.Image"
   direction: GZ_TO_ROS
 
-# This publishes ok, but it off in the wrong frame (optical frame, not pointcloud frame)
-#- ros_topic_name: "camera/depth/depth_image/points"
-#  gz_topic_name: "camera/depth/depth_image/points"
-#  ros_type_name: "sensor_msgs/msg/PointCloud2"
-#  gz_type_name: "gz.msgs.PointCloudPacked"
-#  direction: GZ_TO_ROS
-
-- ros_topic_name: "camera/depth/camera_info"
-  gz_topic_name: "camera/depth/camera_info"
-  ros_type_name: "sensor_msgs/msg/CameraInfo"
-  gz_type_name: "gz.msgs.CameraInfo"
-  direction: GZ_TO_ROS
-
-# gz topic published by Pointcloud Camera
-# all in frame_id "pointcloud_frame" (which is incorrectly oriented,
-# see https://github.com/gazebosim/gz-sensors/issues/29#issuecomment-3113732696)
-
-#- ros_topic_name: "camera/pointcloud/image"
-#  gz_topic_name: "camera/pointcloud/image"
-#  ros_type_name: "sensor_msgs/msg/Image"
-#  gz_type_name: "gz.msgs.Image"
-#  direction: GZ_TO_ROS
-
-#- ros_topic_name: "camera/pointcloud/depth_image"
-#  gz_topic_name: "camera/pointcloud/depth_image"
-#  ros_type_name: "sensor_msgs/msg/Image"
-#  gz_type_name: "gz.msgs.Image"
-#  direction: GZ_TO_ROS
-
-- ros_topic_name: "camera/pointcloud/points"
-  gz_topic_name: "camera/pointcloud/points"
+- ros_topic_name: "camera/rgbd/points"
+  gz_topic_name: "camera/rgbd/points"
   ros_type_name: "sensor_msgs/msg/PointCloud2"
   gz_type_name: "gz.msgs.PointCloudPacked"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "camera/pointcloud/camera_info"
-  gz_topic_name: "camera/pointcloud/camera_info"
+- ros_topic_name: "camera/rgbd/camera_info"
+  gz_topic_name: "camera/rgbd/camera_info"
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS

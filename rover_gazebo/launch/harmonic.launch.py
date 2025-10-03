@@ -22,9 +22,7 @@ from launch.actions import IncludeLaunchDescription
 from launch.actions import TimerAction
 from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution
-from launch_ros.substitutions import FindPackageShare
-from launch_ros.parameter_descriptions import ParameterValue
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 
 from launch_ros.actions import Node
 
@@ -121,85 +119,47 @@ def generate_launch_description():
         condition=IfCondition(launch_rviz),
     )
 
-    # Topic throttling nodes for RViz performance optimization
-    throttle_scan_cmd = Node(
-        package="topic_tools",
-        executable="throttle",
-        arguments=["messages", "/scan", "8", "/scan_throttled"],
-        parameters=[{"use_sim_time": use_sim_time}],
-        name="throttle_scan",
-    )
-
-    throttle_rgb_cmd = Node(
-        package="topic_tools",
-        executable="throttle",
-        arguments=["messages", "/camera/rgb/image_raw", "5", "/camera/rgb/image_raw_throttled"],
-        parameters=[{"use_sim_time": use_sim_time}],
-        name="throttle_rgb",
-    )
-
-    throttle_depth_cmd = Node(
-        package="topic_tools",
-        executable="throttle",
-        arguments=["messages", "/camera/depth/image_raw", "3", "/camera/depth/image_raw_throttled"],
-        parameters=[{"use_sim_time": use_sim_time}],
-        name="throttle_depth",
-    )
-
-    throttle_tf_cmd = Node(
-        package="topic_tools",
-        executable="throttle",
-        arguments=["messages", "/tf", "10", "/tf_throttled"],
-        parameters=[{"use_sim_time": use_sim_time}],
-        name="throttle_tf",
-    )
-
-    throttle_odom_cmd = Node(
-        package="topic_tools",
-        executable="throttle",
-        arguments=["messages", "/odom", "10", "/odom_throttled"],
-        parameters=[{"use_sim_time": use_sim_time}],
-        name="throttle_odom",
-    )
-
-    throttle_pointcloud_cmd = Node(
-        package="topic_tools",
-        executable="throttle",
-        arguments=["messages", "/camera/pointcloud/points", "2", "/camera/pointcloud/points_throttled"],
-        parameters=[{"use_sim_time": use_sim_time}],
-        name="throttle_pointcloud",
-    )
-
-    throttle_depth_image_cmd = Node(
-        package="topic_tools",
-        executable="throttle",
-        arguments=["messages", "/camera/depth/depth_image", "3", "/camera/depth/depth_image_throttled"],
-        parameters=[{"use_sim_time": use_sim_time}],
-        name="throttle_depth_image",
-    )
-
     ### LAUNCHS ###
+    world_path = PathJoinSubstitution(
+        [
+            pkg_rover_gazebo,
+            "worlds",
+            "mars.sdf",
+        ]
+    )
 
-    # Setup to launch the simulator and Gazebo world, not paused
-    # TODO - split between client and server
-    gz_sim_cmd = IncludeLaunchDescription(
+    gz_args_gui = [
+        world_path,
+        " -r -v 4",
+    ]
+
+    gz_sim_cmd_gui = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")
         ),
         launch_arguments={
-            "gz_args": [
-                PathJoinSubstitution(
-                    [
-                        pkg_rover_gazebo,
-                        "worlds",
-                        "shapes.sdf",
-                    ]
-                ),
-                " -s -r -v 4",  # -s for server only, no GUI
-            ],
+            "gz_args": gz_args_gui,
             "on_exit_shutdown": "true",
-            "gui": "false",  # explicitly disable GUI if supported
+            "gui": "true",
         }.items(),
+        condition=IfCondition(launch_gui),
+    )
+
+    gz_args_headless = [
+        world_path,
+        " -s -r -v 4",
+    ]
+
+    gz_sim_cmd_headless = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")
+        ),
+        launch_arguments={
+            "gz_args": gz_args_headless,
+            "on_exit_shutdown": "true",
+            "gui": "false",
+        }.items(),
+        condition=UnlessCondition(launch_gui),
     )
 
     localization_cmd = IncludeLaunchDescription(
@@ -256,20 +216,6 @@ def generate_launch_description():
         actions=[spawn_cmd],
     )
 
-    # Start throttling after robot is spawned
-    throttling_cmd_delayed = TimerAction(
-        period=10.0,  # Start throttling after robot and topics are active
-        actions=[
-            throttle_scan_cmd,
-            throttle_rgb_cmd,
-            throttle_depth_cmd,
-            throttle_tf_cmd,
-            throttle_odom_cmd,
-            throttle_pointcloud_cmd,
-            throttle_depth_image_cmd,
-        ],
-    )
-
     ld = LaunchDescription()
 
     ld.add_action(use_sim_time_cmd)
@@ -291,9 +237,9 @@ def generate_launch_description():
     # ld.add_action(navigation_cmd)
 
     ld.add_action(localization_cmd)
-    ld.add_action(gz_sim_cmd)
+    ld.add_action(gz_sim_cmd_gui)
+    ld.add_action(gz_sim_cmd_headless)
     ld.add_action(rviz_cmd)
     ld.add_action(cmd_vel_cmd)
     ld.add_action(spawn_cmd_delayed)
-    ld.add_action(throttling_cmd_delayed)
     return ld
