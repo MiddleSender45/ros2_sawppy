@@ -67,7 +67,7 @@ def generate_launch_description():
         "launch_rviz", default_value="True", description="Whether launch rviz2"
     )
 
-    # Allow disabling teleop 
+    # Allow disabling teleop
     use_teleop = LaunchConfiguration("use_teleop")
     use_teleop_cmd = DeclareLaunchArgument(
         "use_teleop",
