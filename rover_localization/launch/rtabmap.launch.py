@@ -49,7 +49,7 @@ def generate_launch_description():
             "frame_id": "base_link",
             "subscribe_depth": True,
             "subscribe_rgb": True,
-            "subscribe_scan": False,
+            "subscribe_scan": True,
             "approx_sync": True,
             "publish_tf": True,
             "use_sim_time": use_sim_time,
@@ -87,7 +87,7 @@ def generate_launch_description():
             "Vis/CorType": "0",
             # kNNFlannNaive=0, kNNFlannKdTree=1, kNNFlannLSH=2, kNNBruteForce=3, kNNBruteForceGPU=4, BruteForceCrossCheck=5, SuperGlue=6, GMS=7
             "Vis/CorNNType": "1",
-            "Grid/Sensor": "1",
+            "Grid/Sensor": "2",
             "Grid/DepthDecimation": "4",
             "Grid/RangeMin": "0.0",
             "Grid/RangeMax": "5.0",
@@ -114,6 +114,7 @@ def generate_launch_description():
         ("imu", "imu"),
         ("odom", "odom"),
         ("goal", "goal_pose"),
+        ("scan", "scan"),
     ]
 
     return LaunchDescription(
