@@ -1,0 +1,57 @@
+# Indoor room waypoints  (35x35ft = 10.668 x 10.668m)
+# Boxes are at: (+3,+3), (-3,+3), (-3,-3), (+3,-3)
+# Waypoints route around the room perimeter and through the centre
+
+waypoints:
+
+  - name: "start_centre"
+    x: 0.0
+    y: 0.0
+    yaw: 0.0
+
+  - name: "near_box_ne"
+    x: 1.5
+    y: 1.5
+    yaw: 45.0
+
+  - name: "north_mid"
+    x: 0.0
+    y: 4.0
+    yaw: 180.0
+
+  - name: "near_box_nw"
+    x: -1.5
+    y: 1.5
+    yaw: -135.0
+
+  - name: "west_mid"
+    x: -4.0
+    y: 0.0
+    yaw: -90.0
+
+  - name: "near_box_sw"
+    x: -1.5
+    y: -1.5
+    yaw: -45.0
+
+  - name: "south_mid"
+    x: 0.0
+    y: -4.0
+    yaw: 0.0
+
+  - name: "near_box_se"
+    x: 1.5
+    y: -1.5
+    yaw: 45.0
+
+  - name: "east_mid"
+    x: 4.0
+    y: 0.0
+    yaw: 90.0
+
+  - name: "return_centre"
+    x: 0.0
+    y: 0.0
+    yaw: 0.0
+
+on_completion: "idle"

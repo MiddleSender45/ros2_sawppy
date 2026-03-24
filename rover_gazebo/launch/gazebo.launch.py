@@ -24,7 +24,7 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
@@ -182,7 +182,7 @@ def generate_launch_description():
     ld.add_action(localization_cmd)
     ld.add_action(navigation_cmd)
     ld.add_action(cmd_vel_cmd)
-    ld.add_action(spawn_cmd)
+    ld.add_action(TimerAction(period=10.0, actions=[spawn_cmd]))
     ld.add_action(rviz_cmd)
 
     return ld
