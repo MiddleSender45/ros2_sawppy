@@ -1,0 +1,21 @@
+// floor.material
+// OGRE material script for the indoor room floor (oak wood texture)
+
+material RoverWorld/Floor
+{
+    technique
+    {
+        pass
+        {
+            ambient  0.9 0.9 0.9 1.0
+            diffuse  1.0 1.0 1.0 1.0
+            specular 0.1 0.1 0.1 1.0 16.0
+
+            texture_unit
+            {
+                texture ../textures/floor.jpg
+                scale 0.15 0.15
+            }
+        }
+    }
+}
