@@ -1,0 +1,249 @@
+<?xml version="1.0" ?>
+<!--
+  rover_world.world
+  Fully self-contained Gazebo world — no external SDF, DAE, or model:// URIs.
+
+  Launch with Gazebo Classic:  gazebo rover_world.world
+  Launch with gz-sim:          gz sim rover_world.world
+
+  Scene summary (all sizes/positions derived from rover_world.dae):
+    ground        10.0 × 15.0 × 0.362 m slab at origin
+    barrier_south longitudinal wall,  Y ≈ −7.54
+    barrier_north_a/b two overlapping north walls, Y ≈ +7.57
+    barrier_east  transverse wall,    X ≈ +6.80  (runs along Y axis)
+    barrier_west  transverse wall,    X ≈ −6.70  (runs along Y axis)
+-->
+<sdf version="1.7">
+  <world name="rover_world">
+
+    <!-- ── Physics ─────────────────────────────────────────────────── -->
+    <physics name="default_physics" default="true" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+      <gravity>0 0 -9.81</gravity>
+    </physics>
+
+    <!-- ── Scene ───────────────────────────────────────────────────── -->
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.53 0.73 0.87 1</background>
+      <shadows>true</shadows>
+    </scene>
+
+    <!-- ── Sun ─────────────────────────────────────────────────────── -->
+    <light name="sun" type="directional">
+      <cast_shadows>true</cast_shadows>
+      <direction>-0.292 -0.771 -0.567</direction>
+      <diffuse>0.9 0.9 0.85 1</diffuse>
+      <specular>0.3 0.3 0.3 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+    </light>
+
+    <!-- ── GUI camera ──────────────────────────────────────────────── -->
+    <gui fullscreen="0">
+      <camera name="user_camera">
+        <pose>7.36 -6.93 4.96 0 0.45 2.36</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         GROUND PLANE
+         Vertex bounds (with DAE node scale applied):
+           X ∈ [-5.0, 5.0]   (raw ±6.978 × scale 0.7165)
+           Y ∈ [-7.5, 7.5]   (raw ±6.978 × scale 1.0748)
+           Z ∈ [0, 0.362]
+         Size:   10.0 × 15.0 × 0.362 m
+         Centre: (0, 0, 0.181)
+    ══════════════════════════════════════════════════════════════ -->
+    <model name="ground">
+      <static>true</static>
+      <pose>0 0 0.181 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>10.0 15.0 0.362</size></box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode><mu>0.8</mu><mu2>0.8</mu2></ode>
+            </friction>
+            <contact>
+              <ode><kp>1e6</kp><kd>100</kd></ode>
+            </contact>
+          </surface>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>10.0 15.0 0.362</size></box>
+          </geometry>
+          <material>
+            <ambient>0.6 0.55 0.45 1</ambient>
+            <diffuse>0.7 0.65 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         BARRIER – south  (Cube, Material.003)
+         Mesh extents: X∈[-5.003,5.014]  Y∈[0.735,1.0]  Z∈[-1,4.643]
+         Node translate: (0, -8.411, 1.040)
+         Size:   10.017 × 0.265 × 5.643
+         Centre: local(0.006, 0.868, 1.821) + translate = (0.006, -7.543, 2.861)
+    ══════════════════════════════════════════════════════════════ -->
+    <model name="barrier_south">
+      <static>true</static>
+      <pose>0.006 -7.543 2.861 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>10.017 0.265 5.643</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>10.017 0.265 5.643</size></box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.5 0.5 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         BARRIER – north A  (Cube.001, no material)
+         Same mesh extents as south barrier
+         Node translate: (0, 6.703, 1.040)
+         Centre: (0.006, 7.571, 2.861)
+    ══════════════════════════════════════════════════════════════ -->
+    <model name="barrier_north_a">
+      <static>true</static>
+      <pose>0.006 7.571 2.861 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>10.017 0.265 5.643</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>10.017 0.265 5.643</size></box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.5 0.5 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         BARRIER – north B  (Cube.002, Material.004)
+         Identical geometry and position to north A.
+         Two separate Blender objects occupying the same space in the DAE.
+    ══════════════════════════════════════════════════════════════ -->
+    <model name="barrier_north_b">
+      <static>true</static>
+      <pose>0.006 7.571 2.861 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>10.017 0.265 5.643</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>10.017 0.265 5.643</size></box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.5 0.5 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         BARRIER – east  (Cube.003, Material.002)
+         Mesh extents: X∈[-7.029,8.369]  Y∈[0.735,1.0]  Z∈[-1,4.643]
+         Node: −90° Z rotation + translate(5.933, -0.651, 1.040)
+         Size (local frame): 15.398 × 0.265 × 5.643
+         After −90° Z the long axis runs along world-Y.
+         World centre: (6.801, -0.657, 2.861)
+    ══════════════════════════════════════════════════════════════ -->
+    <model name="barrier_east">
+      <static>true</static>
+      <pose>4.900 0.000 2.861 0 0 -1.5708</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>15.398 0.265 5.643</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>15.398 0.265 5.643</size></box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.5 0.5 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         BARRIER – west  (Cube.004, Material.002)
+         Same mesh extents as east barrier
+         Node: +90° Z rotation + translate(-5.830, 0.640, 1.040)
+         World centre: (-6.698, 1.310, 2.861)
+    ══════════════════════════════════════════════════════════════ -->
+    <model name="barrier_west">
+      <static>true</static>
+      <pose>-4.900 0.000 2.861 0 0 1.5708</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>15.398 0.265 5.643</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>15.398 0.265 5.643</size></box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.5 0.5 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         ADD YOUR ROVER HERE
+         Example:
+         <include>
+           <uri>model://my_rover</uri>
+           <name>rover</name>
+           <pose>0 0 0.5 0 0 0</pose>
+         </include>
+    ══════════════════════════════════════════════════════════════ -->
+
+  </world>
+</sdf>
