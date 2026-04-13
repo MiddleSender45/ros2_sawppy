@@ -86,7 +86,7 @@
           </geometry>
           <material>
             <script>
-                <uri>file:///home/mitul/trippy_humble_ws/src/ros2_sawppy/rover_gazebo/models/indoor_room/materials/scripts/floor.material</uri>
+                <uri>file:///home/mitul/code/trippy_ws/src/ros2_sawppy/rover_gazebo/models/indoor_room/materials/scripts/floor.material</uri>
                 <name>RoverWorld/Floor</name>
             </script>
           </material>
@@ -116,7 +116,7 @@
           </geometry>
           <material>
             <script>
-              <uri>file:///home/mitul/trippy_humble_ws/src/ros2_sawppy/rover_gazebo/models/indoor_room/materials/scripts/wall.material</uri>
+              <uri>file:///home/mitul/code/trippy_ws/src/ros2_sawppy/rover_gazebo/models/indoor_room/materials/scripts/wall.material</uri>
               <name>RoverWorld/Wall</name>
             </script>
           </material>
@@ -144,7 +144,7 @@
           </geometry>
           <material>
             <script>
-              <uri>file:///home/mitul/trippy_humble_ws/src/ros2_sawppy/rover_gazebo/models/indoor_room/materials/scripts/wall.material</uri>
+              <uri>file:///home/mitul/code/trippy_ws/src/ros2_sawppy/rover_gazebo/models/indoor_room/materials/scripts/wall.material</uri>
               <name>RoverWorld/Wall</name>
             </script>
           </material>
@@ -175,7 +175,7 @@
           </geometry>
           <material>
             <script>
-              <uri>file:///home/mitul/trippy_humble_ws/src/ros2_sawppy/rover_gazebo/models/indoor_room/materials/scripts/wall.material</uri>
+              <uri>file:///home/mitul/code/trippy_ws/src/ros2_sawppy/rover_gazebo/models/indoor_room/materials/scripts/wall.material</uri>
               <name>RoverWorld/Wall</name>
             </script>
           </material>
@@ -204,7 +204,7 @@
           </geometry>
           <material>
             <script>
-              <uri>file:///home/mitul/trippy_humble_ws/src/ros2_sawppy/rover_gazebo/models/indoor_room/materials/scripts/wall.material</uri>
+              <uri>file:///home/mitul/code/trippy_ws/src/ros2_sawppy/rover_gazebo/models/indoor_room/materials/scripts/wall.material</uri>
               <name>RoverWorld/Wall</name>
             </script>
           </material>

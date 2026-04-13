@@ -39,64 +39,63 @@ def generate_launch_description():
         "rover_motor_controller_cpp"
     )
     rover_teleop_shared_dir = get_package_share_directory("rover_teleop")
-    #pkg_rover_localization = get_package_share_directory("rover_localization")
-    #pkg_rover_navigation = get_package_share_directory("rover_navigation")
+    pkg_rover_localization = get_package_share_directory("rover_localization")
+    pkg_rover_navigation = get_package_share_directory("rover_navigation")
 
     #env1 = SetEnvironmentVariable("RCUTILS_LOGGING_USE_STDOUT", "1")
     #env2 = SetEnvironmentVariable("RCUTILS_LOGGING_BUFFERED_STREAM", "1")
 
     # Robot State Publisher
-    #use_robot_state_publisher_arg = DeclareLaunchArgument(
-    #    "use_robot_state_publisher",
-    #    default_value="true",
-    #    description="Whether to launch the robot_state_publisher node",
-    #)
-    #use_robot_state_publisher = LaunchConfiguration("use_robot_state_publisher")
+    use_robot_state_publisher_arg = DeclareLaunchArgument(
+        "use_robot_state_publisher",
+        default_value="true",
+        description="Whether to launch the robot_state_publisher node",
+    )
+    use_robot_state_publisher = LaunchConfiguration("use_robot_state_publisher")
 
-    #robot_description_pkg_share = get_package_share_directory("rover_description")
+    robot_description_pkg_share = get_package_share_directory("rover_description")
 
-    #robot_state_publisher_launch = IncludeLaunchDescription(
-    #    PythonLaunchDescriptionSource(
-    #        os.path.join(robot_description_pkg_share, "launch", "robot_state_publisher.launch.py")
-    #    ),
-    #    condition=conditions.IfCondition(use_robot_state_publisher),
-    #)
-
+    robot_state_publisher_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(robot_description_pkg_share, "launch", "robot_state_publisher.launch.py")
+        ),
+        condition=conditions.IfCondition(use_robot_state_publisher),
+    )
     # Navigation Stack
-    #nav2_planner = LaunchConfiguration("nav2_planner")
-    #nav2_planner_cmd = DeclareLaunchArgument(
-    #    "nav2_planner",
-    #    default_value="SmacHybrid",
-    #    choices=["SmacHybrid", "SmacLattice"],
-    #    description="Nav2 planner (SmacHybrid or SmacLattice)",
-    #)
+    nav2_planner = LaunchConfiguration("nav2_planner")
+    nav2_planner_cmd = DeclareLaunchArgument(
+        "nav2_planner",
+        default_value="SmacHybrid",
+        choices=["SmacHybrid", "SmacLattice"],
+        description="Nav2 planner (SmacHybrid or SmacLattice)",
+    )
 
-    #nav2_controller = LaunchConfiguration("nav2_controller")
-    #nav2_controller_cmd = DeclareLaunchArgument(
-    #   "nav2_controller",
-    #    default_value="RPP",
-    #    choices=["RPP", "TEB"],
-    #    description="Nav2 controller (RPP or TEB)",
-    #)
+    nav2_controller = LaunchConfiguration("nav2_controller")
+    nav2_controller_cmd = DeclareLaunchArgument(
+        "nav2_controller",
+        default_value="RPP",
+        choices=["RPP", "TEB"],
+        description="Nav2 controller (RPP or TEB)",
+    )
 
     # Localization and Navigation
-    #localization_cmd = IncludeLaunchDescription(
-    #    PythonLaunchDescriptionSource(
-    #        os.path.join(pkg_rover_localization, "launch", "localization.launch.py")
-    #    ),
-    #    launch_arguments={"use_sim_time": "False"}.items(),
-    #)
+    localization_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_rover_localization, "launch", "localization.launch.py")
+        ),
+        launch_arguments={"use_sim_time": "False"}.items(),
+    )
 
-    #navigation_cmd = IncludeLaunchDescription(
-    #    PythonLaunchDescriptionSource(
-    #        os.path.join(pkg_rover_navigation, "launch", "bringup.launch.py")
-    #    ),
-    #    launch_arguments={
-    #        "use_sim_time": "False",
-    #        "planner": nav2_planner,
-    #        "controller": nav2_controller,
-    #    }.items(),
-    #)
+    navigation_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_rover_navigation, "launch", "bringup.launch.py")
+        ),
+        launch_arguments={
+            "use_sim_time": "False",
+            "planner": nav2_planner,
+            "controller": nav2_controller,
+        }.items(),
+    )
 
     # LIDAR
     use_lidar_arg = DeclareLaunchArgument(
@@ -121,7 +120,7 @@ def generate_launch_description():
     # Kinect
     use_kinect_arg = DeclareLaunchArgument(
         "use_kinect",
-        default_value="true",
+        default_value="false",
         description="Whether to launch the Kinect node",
     )
     use_kinect = LaunchConfiguration("use_kinect")
@@ -169,18 +168,18 @@ def generate_launch_description():
 
     ld.add_action(use_lidar_arg)
     ld.add_action(use_kinect_arg)
-    #ld.add_action(use_robot_state_publisher_arg)
-    #ld.add_action(nav2_planner_cmd)
-    #ld.add_action(nav2_controller_cmd)
+    ld.add_action(use_robot_state_publisher_arg)
+    ld.add_action(nav2_planner_cmd)
+    ld.add_action(nav2_controller_cmd)
 
     ld.add_action(urg_node_action_cmd)
     ld.add_action(kinect_node_action_cmd)
     # ld.add_action(teleop_twist_joy_action_cmd)
     ld.add_action(rover_motor_controller_action_cmd)
-    #ld.add_action(robot_state_publisher_launch)
+    ld.add_action(robot_state_publisher_launch)
     # Nav and Localization launch
-    #ld.add_action(TimerAction(period=5.0, actions=[localization_cmd]))
-    #ld.add_action(TimerAction(period=10.0, actions=[navigation_cmd]))
+    ld.add_action(TimerAction(period=5.0, actions=[localization_cmd]))
+    ld.add_action(TimerAction(period=10.0, actions=[navigation_cmd]))
     # ld.add_action(object_detector_node_cmd)
 
     return ld
