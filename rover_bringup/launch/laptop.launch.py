@@ -26,11 +26,12 @@ from launch import LaunchDescription
 from launch.actions import SetEnvironmentVariable, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch.actions import DeclareLaunchArgument
 from launch_ros.actions import Node
 from launch.actions import TimerAction
 from launch import conditions
+from launch.conditions import IfCondition
 
 
 def generate_launch_description():
@@ -38,6 +39,7 @@ def generate_launch_description():
     #rover_motor_controller_shared_dir = get_package_share_directory(
     #    "rover_motor_controller_cpp"
     #)
+    pkg_path = get_package_share_directory("rover_gazebo")
     rover_teleop_shared_dir = get_package_share_directory("rover_teleop")
     pkg_rover_localization = get_package_share_directory("rover_localization")
     pkg_rover_navigation = get_package_share_directory("rover_navigation")

@@ -120,7 +120,7 @@ def generate_launch_description():
     # Kinect
     use_kinect_arg = DeclareLaunchArgument(
         "use_kinect",
-        default_value="false",
+        default_value="true",
         description="Whether to launch the Kinect node",
     )
     use_kinect = LaunchConfiguration("use_kinect")
