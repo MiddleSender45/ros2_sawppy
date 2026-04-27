@@ -60,6 +60,10 @@ private:
   double wheel_base_m_;
   int speed_max_raw_;
   double speed_max_ms_;
+
+  // Last commanded drive motor duties (signed, range [-speed_max_raw, +speed_max_raw])
+  // Stored from callback() so publish_odometry() never needs to read from hardware
+  std::vector<int> last_drive_commands_;
 };
 
 } // namespace motor_controller

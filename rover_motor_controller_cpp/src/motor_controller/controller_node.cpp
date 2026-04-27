@@ -30,7 +30,6 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "lx16a/lx16a_consts.hpp"
 #include "lx16a/motor_controller.hpp"
 #include "motor_controller/controller_node.hpp"
 #include "nav_msgs/msg/odometry.hpp"
@@ -107,6 +106,9 @@ ControllerNode::ControllerNode() : rclcpp::Node("controller_node") {
   theta_ = 0.0;
   last_time_ = this->now();
 
+  // Initialise commanded speeds to zero (6 drive motors)
+  last_drive_commands_ = {0, 0, 0, 0, 0, 0};
+
   // Odometry publisher
   odom_publisher =
       this->create_publisher<nav_msgs::msg::Odometry>("odom_wheel", 10);
@@ -126,6 +128,8 @@ void ControllerNode::callback(
     const rover_msgs::msg::MotorsCommand::SharedPtr msg) {
   this->motor_controller->corner_to_position(msg->corner_motor);
   this->motor_controller->send_motor_duty(msg->drive_motor);
+  // Cache commanded duties for odometry (avoids blocking serial read-back)
+  last_drive_commands_ = msg->drive_motor;
 }
 
 void ControllerNode::publish_odometry() {
@@ -136,45 +140,70 @@ void ControllerNode::publish_odometry() {
   if (dt <= 0.0)
     return;
 
-  // Convert raw duty to m/s; right-side motors are mirrored so negate them
+  // Use last commanded duty values — avoids any blocking serial read-back.
+  // The LX16A wait_for_response() is a while(true) loop; calling it from a
+  // timer callback would hang if the bus is idle between drive commands.
+  // Left-side: index 0-2 (positive duty = forward)
+  // Right-side: index 3-5 (positive duty = backward due to mirrored mount)
   double scale = speed_max_ms_ / static_cast<double>(speed_max_raw_);
 
-  double lf = motor_controller->get_motor_speed(lx16a::MOTOR_LEFT_FRONT) * scale;
-  double lm = motor_controller->get_motor_speed(lx16a::MOTOR_LEFT_MIDDLE) * scale;
-  double lb = motor_controller->get_motor_speed(lx16a::MOTOR_LEFT_BACK) * scale;
-  double rf = motor_controller->get_motor_speed(lx16a::MOTOR_RIGHT_FRONT) * -scale;
-  double rm = motor_controller->get_motor_speed(lx16a::MOTOR_RIGHT_MIDDLE) * -scale;
-  double rb = motor_controller->get_motor_speed(lx16a::MOTOR_RIGHT_BACK) * -scale;
+  double v_left  = (last_drive_commands_[0] +
+                    last_drive_commands_[1] +
+                    last_drive_commands_[2]) / 3.0 * scale;
+  double v_right = (last_drive_commands_[3] +
+                    last_drive_commands_[4] +
+                    last_drive_commands_[5]) / 3.0 * -scale;
 
-  double v_left = (lf + lm + lb) / 3.0;
-  double v_right = (rf + rm + rb) / 3.0;
-
-  double v = (v_left + v_right) / 2.0;
+  double v     = (v_left + v_right) / 2.0;
   double omega = (v_right - v_left) / wheel_base_m_;
 
-  // Integrate pose
+  // Integrate pose (simple Euler)
   theta_ += omega * dt;
-  x_ += v * std::cos(theta_) * dt;
-  y_ += v * std::sin(theta_) * dt;
+  x_     += v * std::cos(theta_) * dt;
+  y_     += v * std::sin(theta_) * dt;
 
-  // Build and publish nav_msgs/Odometry
-  auto msg = nav_msgs::msg::Odometry();
-  msg.header.stamp = now;
+  // --- Build nav_msgs/Odometry (standard nav-stack format) ---
+  nav_msgs::msg::Odometry msg;
+  msg.header.stamp    = now;
   msg.header.frame_id = "odom";
-  msg.child_frame_id = "base_link";
+  msg.child_frame_id  = "base_link";
 
+  // Pose in the odom frame
   msg.pose.pose.position.x = x_;
   msg.pose.pose.position.y = y_;
   msg.pose.pose.position.z = 0.0;
 
-  // Yaw-only quaternion
+  // Yaw-only quaternion (planar rover)
   msg.pose.pose.orientation.x = 0.0;
   msg.pose.pose.orientation.y = 0.0;
   msg.pose.pose.orientation.z = std::sin(theta_ / 2.0);
   msg.pose.pose.orientation.w = std::cos(theta_ / 2.0);
 
-  msg.twist.twist.linear.x = v;
+  // Pose covariance (6x6 row-major).  Diagonal: [x, y, z, roll, pitch, yaw]
+  // z/roll/pitch are 0 for a planar rover (set near-zero, not exactly 0,
+  // so EKF filters don't treat them as perfectly known).
+  msg.pose.covariance[0]  = 1e-3;   // x
+  msg.pose.covariance[7]  = 1e-3;   // y
+  msg.pose.covariance[14] = 1e-9;   // z  (constrained to ground)
+  msg.pose.covariance[21] = 1e-9;   // roll
+  msg.pose.covariance[28] = 1e-9;   // pitch
+  msg.pose.covariance[35] = 1e-3;   // yaw
+
+  // Twist in the child (base_link) frame
+  msg.twist.twist.linear.x  = v;
+  msg.twist.twist.linear.y  = 0.0;
+  msg.twist.twist.linear.z  = 0.0;
+  msg.twist.twist.angular.x = 0.0;
+  msg.twist.twist.angular.y = 0.0;
   msg.twist.twist.angular.z = omega;
+
+  // Twist covariance (6x6 row-major).  Diagonal: [vx, vy, vz, wx, wy, wz]
+  msg.twist.covariance[0]  = 1e-3;  // vx
+  msg.twist.covariance[7]  = 1e-9;  // vy (non-holonomic: near-zero)
+  msg.twist.covariance[14] = 1e-9;  // vz
+  msg.twist.covariance[21] = 1e-9;  // wx
+  msg.twist.covariance[28] = 1e-9;  // wy
+  msg.twist.covariance[35] = 1e-3;  // wz
 
   odom_publisher->publish(msg);
 }
