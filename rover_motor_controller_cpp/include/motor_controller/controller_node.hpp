@@ -23,8 +23,10 @@
 #ifndef CONTROLLER_NODE_HPP
 #define CONTROLLER_NODE_HPP
 
+#include <chrono>
 #include <memory>
 
+#include "nav_msgs/msg/odometry.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 #include "lx16a/motor_controller.hpp"
@@ -36,11 +38,28 @@ class ControllerNode : public rclcpp::Node {
 public:
   ControllerNode();
   void callback(const rover_msgs::msg::MotorsCommand::SharedPtr msg);
+  void publish_odometry();
   void shutdown();
 
 private:
   std::unique_ptr<lx16a::MotorController> motor_controller;
   rclcpp::Subscription<rover_msgs::msg::MotorsCommand>::SharedPtr subscription;
+
+  // Odometry publisher and timer
+  rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_publisher;
+  rclcpp::TimerBase::SharedPtr odom_timer;
+
+  // Accumulated pose
+  double x_;
+  double y_;
+  double theta_;
+  rclcpp::Time last_time_;
+
+  // Robot geometry / speed-scaling params
+  double wheel_radius_m_;
+  double wheel_base_m_;
+  int speed_max_raw_;
+  double speed_max_ms_;
 };
 
 } // namespace motor_controller
