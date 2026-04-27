@@ -82,6 +82,20 @@ def generate_launch_description():
         description="baud rate",
     )
 
+    wheel_radius_m = LaunchConfiguration("wheel_radius_m")
+    declare_wheel_radius_m_cmd = DeclareLaunchArgument(
+        "wheel_radius_m",
+        default_value="0.065",
+        description="Wheel radius in metres",
+    )
+
+    wheel_base_m = LaunchConfiguration("wheel_base_m")
+    declare_wheel_base_m_cmd = DeclareLaunchArgument(
+        "wheel_base_m",
+        default_value="0.260",
+        description="Wheel base (track width) in metres",
+    )
+
 
     #ros_discovery_server = LaunchConfiguration("ros_discovery_server")
     #declare_ros_discovery_server_cmd = DeclareLaunchArgument(
@@ -126,11 +140,13 @@ def generate_launch_description():
         executable="controller_node",
         name="controller_node",
         parameters=[
-            {"motor_controller_device": motor_controller_device, "baud_rate": baud_rate}
+            {
+                "motor_controller_device": motor_controller_device,
+                "baud_rate": baud_rate,
+                "wheel_radius_m": wheel_radius_m,
+                "wheel_base_m": wheel_base_m,
+            }
         ],
-#        additional_env={
-#          "ROS_DISCOVERY_SERVER": ros_discovery_server,
-#        },
     )
 
     ld = LaunchDescription()
@@ -144,6 +160,8 @@ def generate_launch_description():
     ld.add_action(declare_speed_factor_cmd)
     ld.add_action(declare_motor_controller_device_cmd)
     ld.add_action(declare_baud_rate_cmd)
+    ld.add_action(declare_wheel_radius_m_cmd)
+    ld.add_action(declare_wheel_base_m_cmd)
 
     ld.add_action(vel_parser_node_cmd)
     ld.add_action(controller_node_cmd)
