@@ -20,6 +20,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rover_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
 
 INCLUDE_DIRECTORIES(
   include
@@ -39,7 +40,7 @@ target_include_directories(controller_node PRIVATE
   include/motor_controller
 )
 target_link_libraries(controller_node pthread boost_system)
-ament_target_dependencies(controller_node rclcpp rover_msgs)
+ament_target_dependencies(controller_node rclcpp rover_msgs nav_msgs)
 
 ### VEL PARSER NODE
 set(VEL_PARSER_NODE_SOURCES
