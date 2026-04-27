@@ -29,10 +29,11 @@ def generate_launch_description():
     parameters = [
         {
             "frame_id": "base_link",
-            "subscribe_depth": True,
             "subscribe_rgb": True,
-            "approx_sync": True,
-            "approx_sync_max_interval": 0.01,
+            "subscribe_depth": True,
+            # "subscribe_rgbd": True,
+            "approx_sync": False,
+            # "approx_sync_max_interval": 0.01,
             "publish_tf": False,
             "wait_imu_to_init": False,
             "publish_null_when_lost": False,
@@ -96,11 +97,12 @@ def generate_launch_description():
     ]
 
     remappings = [
-        ("rgb/image", "camera/image_raw"),
-        ("rgb/camera_info", "camera/camera_info"),
-        ("depth/image", "camera/depth/image_raw"),
-        ("imu", "imu"),
-        ("odom", "odom_rgbd"),
+        ("rgb/image", "/kinect/image_raw"),
+        ("rgb/camera_info", "/kinect/camera_info"),
+        ("depth/image", "/kinect/depth/image_raw"),
+        # ("imu", "/imu"),
+        ("odom", "/odom_rgbd"),
+        #("scan", "/scan"),
     ]
 
     return LaunchDescription(
@@ -113,5 +115,21 @@ def generate_launch_description():
                 remappings=remappings,
                 arguments=["--ros-args", "--log-level", "Error"],
             ),
+            #Node(
+            #    package="rtabmap_sync",
+            #    executable="rgbd_sync",
+            #    name="rgbd_sync",
+            #    output="screen",
+            #    parameters=[{
+            #        "approx_sync": True,
+            #        "queue_size": 10,
+            #    }],
+            #    remappings=[
+            #        ("rgb/image", "/kinect/image_raw"),
+            #        ("depth/image", "/kinect/depth/image_raw"),
+            #        ("rgb/camera_info", "/kinect/camera_info"),
+            #        ("rgbd_image", "/rgbd_image"),
+            #    ],
+            #),
         ]
     )

@@ -40,16 +40,16 @@ def generate_launch_description():
     launch_rtabmapviz = LaunchConfiguration("launch_rtabmapviz")
     launch_rtabmapviz_cmd = DeclareLaunchArgument(
         "launch_rtabmapviz",
-        default_value="True",
+        default_value="False",
         description="Wheather to launch rtabmapviz",
     )
 
     parameters = [
         {
             "frame_id": "base_link",
-            "subscribe_depth": True,
-            "subscribe_rgb": True,
-            "subscribe_scan": True,
+            # "subscribe_depth": True,
+            "subscribe_rgbd": True,
+            # "subscribe_scan": False,
             "approx_sync": True,
             "publish_tf": True,
             "use_sim_time": use_sim_time,
@@ -108,13 +108,13 @@ def generate_launch_description():
     ]
 
     remappings = [
-        ("rgb/image", "camera/image_raw"),
-        ("rgb/camera_info", "camera/camera_info"),
-        ("depth/image", "camera/depth/image_raw"),
-        ("imu", "imu"),
-        ("odom", "odom"),
-        ("goal", "goal_pose"),
-        ("scan", "scan"),
+        ("rgb/image", "/kinect/image_raw"),
+        ("rgb/camera_info", "/kinect/camera_info"),
+        ("depth/image", "/kinect/depth/image_raw"),
+        ("imu", "/imu"),
+        ("odom", "/odom"),
+        ("goal", "/goal_pose"),
+        #("scan", "/scan"),
     ]
 
     return LaunchDescription(

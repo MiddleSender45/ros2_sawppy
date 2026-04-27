@@ -137,11 +137,11 @@ def generate_launch_description():
         #},
     )
 
-    #teleop_twist_joy_action_cmd = IncludeLaunchDescription(
-    #    PythonLaunchDescriptionSource(
-    #        os.path.join(rover_teleop_shared_dir, "launch", "joy_teleop.launch.py")
-    #    ),
-    #)
+    teleop_twist_joy_action_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(rover_teleop_shared_dir, "launch", "joy_teleop.launch.py")
+        ),
+    )
 
     # motor controller node(talks to servo board)
     rover_motor_controller_action_cmd = IncludeLaunchDescription(
@@ -174,7 +174,7 @@ def generate_launch_description():
 
     ld.add_action(urg_node_action_cmd)
     ld.add_action(kinect_node_action_cmd)
-    # ld.add_action(teleop_twist_joy_action_cmd)
+    ld.add_action(teleop_twist_joy_action_cmd)
     ld.add_action(rover_motor_controller_action_cmd)
     ld.add_action(robot_state_publisher_launch)
     # Nav and Localization launch
