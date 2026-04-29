@@ -107,15 +107,28 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
+            # Node(
+            #    package="rtabmap_odom",
+            #    executable="rgbd_odometry",
+            #    output="log",
+            #    parameters=parameters,
+            #    remappings=remappings,
+            #    arguments=["--ros-args", "--log-level", "Error"],
+            # ),
             Node(
-                package="rtabmap_odom",
-                executable="rgbd_odometry",
-                output="log",
-                parameters=parameters,
-                remappings=remappings,
-                arguments=["--ros-args", "--log-level", "Error"],
-            ),
-            #Node(
+                package="rf2o_laser_odometry",
+                executable="rf2o_laser_odometry_node",
+                name="rf2o_laser_odometry_node",
+                parameters=[{
+                    "laser_scan_topic": "/scan",
+                    "odom_topic": "odom_lidar",
+                    "publish_tf": False,
+                    "base_frame_id": "base_link",
+                    "odom_frame_id": "odom",
+                    "freq": 10.0,
+                }],
+            )
+            # Node(
             #    package="rtabmap_sync",
             #    executable="rgbd_sync",
             #    name="rgbd_sync",
