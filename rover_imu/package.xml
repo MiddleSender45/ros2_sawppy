@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>rover_imu</name>
+  <version>0.0.1</version>
+  <description>MPU6500 IMU publisher</description>
+
+  <maintainer email="mitulisavailable@gmail.com">Mitul</maintainer>
+  <license>MIT</license>
+
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+
+</package>
