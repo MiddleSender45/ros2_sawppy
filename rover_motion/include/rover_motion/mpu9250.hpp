@@ -64,7 +64,7 @@ public:
    * @param i2c_addr  Sensor I²C address (default 0x68)
    */
   explicit MPU9250(const std::string & i2c_bus = "/dev/i2c-1",
-                   uint8_t i2c_addr = DEFAULT_I2C_ADDR);
+                   int i2c_addr = DEFAULT_I2C_ADDR);
 
   ~MPU9250();
 
@@ -76,7 +76,7 @@ public:
 
 private:
   std::string bus_path_;
-  uint8_t     addr_;
+  int         addr_;
   int         fd_{-1};
 
   void     write_reg(uint8_t reg, uint8_t value);

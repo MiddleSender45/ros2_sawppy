@@ -14,7 +14,6 @@
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
-#include <i2c/smbus.h>
 
 #include <chrono>
 #include <memory>
@@ -30,7 +29,7 @@
 namespace mpu9250
 {
 
-MPU9250::MPU9250(const std::string & i2c_bus, uint8_t i2c_addr)
+MPU9250::MPU9250(const std::string & i2c_bus, int i2c_addr)
 : bus_path_(i2c_bus), addr_(i2c_addr)
 {}
 

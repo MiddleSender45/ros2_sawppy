@@ -27,8 +27,7 @@ ament_target_dependencies(imu_node
   std_msgs
 )
 
-# Link system i2c library (libi2c-dev)
-target_link_libraries(imu_node i2c)
+# Note: i2c_smbus_* are inline helpers in <linux/i2c-dev.h>; no -li2c needed.
 
 # ── Install ───────────────────────────────────────────────────────────────────
 install(TARGETS imu_node
