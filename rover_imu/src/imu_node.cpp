@@ -24,7 +24,8 @@ public:
     }
 
 private:
-    int file_;
+    int file_ = -1;
+    bool initialized_ = false;
 
     rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr pub_;
     rclcpp::TimerBase::SharedPtr timer_;
@@ -35,11 +36,19 @@ private:
         file_ = open(device, O_RDWR);
 
         if (file_ < 0) {
-            RCLCPP_ERROR(this->get_logger(), "Failed to open I2C");
+            RCLCPP_ERROR(this->get_logger(),
+                "Failed to open I2C device '%s'. Node will not publish IMU data.", device);
             return;
         }
 
-        ioctl(file_, I2C_SLAVE, 0x68);
+        if (ioctl(file_, I2C_SLAVE, 0x68) < 0) {
+            RCLCPP_ERROR(this->get_logger(), "Failed to set I2C slave address.");
+            close(file_);
+            file_ = -1;
+            return;
+        }
+
+        initialized_ = true;
     }
 
     void write_reg(uint8_t reg, uint8_t val)
@@ -65,6 +74,8 @@ private:
 
     void init_sensor()
     {
+        if (!initialized_) return;
+
         // Wake up device
         write_reg(0x6B, 0x00);
 
@@ -77,6 +88,7 @@ private:
 
     void update()
     {
+        if (!initialized_) return;
         sensor_msgs::msg::Imu msg;
 
         // raw data
