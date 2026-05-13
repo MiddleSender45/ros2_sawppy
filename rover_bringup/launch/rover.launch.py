@@ -170,10 +170,20 @@ def generate_launch_description():
         }.items(),
     )
 
+    joint_state_publisher_cmd = Node(
+    package="joint_state_publisher",
+    executable="joint_state_publisher",
+    name="joint_state_publisher",
+    parameters=[{"use_sim_time": False}],
+)
+
+
+
     # ── Build LaunchDescription ────────────────────────────────────────────
     ld = LaunchDescription()
 
     # Arguments
+    ld.add_action(joint_state_publisher_cmd)
     ld.add_action(use_lidar_arg)
     ld.add_action(use_robot_state_publisher_arg)
     ld.add_action(use_motor_controller_arg)
