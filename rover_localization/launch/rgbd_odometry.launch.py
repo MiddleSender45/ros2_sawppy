@@ -97,12 +97,12 @@ def generate_launch_description():
     ]
 
     remappings = [
-        ("rgb/image", "/kinect/image_raw"),
-        ("rgb/camera_info", "/kinect/camera_info"),
-        ("depth/image", "/kinect/depth/image_raw"),
-        # ("imu", "/imu"),
-        ("odom", "/odom_rgbd"),
-        #("scan", "/scan"),
+        # ("rgb/image", "/kinect/image_raw"),
+        # ("rgb/camera_info", "/kinect/camera_info"),
+        # ("depth/image", "/kinect/depth/image_raw"),
+        ("imu", "/imu"),
+        # ("odom", "/odom_rgbd"),
+        ("scan", "/scan"),
     ]
 
     return LaunchDescription(
