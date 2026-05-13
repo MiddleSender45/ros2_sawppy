@@ -188,27 +188,24 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     # Arguments
+   # Arguments
     ld.add_action(use_lidar_arg)
     ld.add_action(use_robot_state_publisher_arg)
     ld.add_action(use_motor_controller_arg)
     ld.add_action(use_rf2o_arg)
-    ld.add_action(use_rtabmap_arg)
-    ld.add_action(launch_rtabmapviz_arg)
     ld.add_action(nav2_planner_arg)
     ld.add_action(nav2_controller_arg)
 
-    # t = 0 s  — hardware drivers + state publisher
+    # t = 0 s
     ld.add_action(urg_node_cmd)
     ld.add_action(robot_state_publisher_cmd)
     ld.add_action(rover_motor_controller_cmd)
+    ld.add_action(static_map_odom_cmd)   # ← add this
 
-    # t = 3 s  — rf2o needs /scan to already be publishing
+    # t = 3 s
     ld.add_action(TimerAction(period=3.0,  actions=[rf2o_node_cmd]))
 
-    # t = 6 s  — RTAB-Map needs /scan + /odom (odom → base_link TF)
-    ld.add_action(TimerAction(period=6.0,  actions=[rtabmap_cmd]))
-
-    # t = 15 s — Nav2 needs the full map → odom → base_link chain
-    ld.add_action(TimerAction(period=15.0, actions=[navigation_cmd]))
+    # t = 8 s — Nav2
+    ld.add_action(TimerAction(period=8.0, actions=[navigation_cmd]))
 
     return ld
