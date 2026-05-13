@@ -54,21 +54,23 @@ def generate_launch_description():
     )
     use_rf2o = LaunchConfiguration("use_rf2o")
 
-    use_rtabmap_arg = DeclareLaunchArgument(
-        "use_rtabmap",
-        default_value="true",
-        description="Whether to launch RTAB-Map SLAM (provides map->odom TF)",
-    )
-    use_rtabmap = LaunchConfiguration("use_rtabmap")
-
-    # rtabmapviz is optional — useful on a desktop/laptop with a screen,
-    # but disable it on a headless rover computer to save resources.
-    launch_rtabmapviz_arg = DeclareLaunchArgument(
-        "launch_rtabmapviz",
-        default_value="false",
-        description="Whether to launch rtabmapviz (disable on headless robot)",
-    )
-    launch_rtabmapviz = LaunchConfiguration("launch_rtabmapviz")
+    # ── RTAB-Map args — commented out while running in odometry-only mode ──
+    # Uncomment this block and the rtabmap_cmd / TimerAction below to re-enable
+    # full SLAM with loop closure and drift correction.
+    #
+    # use_rtabmap_arg = DeclareLaunchArgument(
+    #     "use_rtabmap",
+    #     default_value="true",
+    #     description="Whether to launch RTAB-Map SLAM (provides map->odom TF)",
+    # )
+    # use_rtabmap = LaunchConfiguration("use_rtabmap")
+    #
+    # launch_rtabmapviz_arg = DeclareLaunchArgument(
+    #     "launch_rtabmapviz",
+    #     default_value="false",
+    #     description="Whether to launch rtabmapviz (disable on headless robot)",
+    # )
+    # launch_rtabmapviz = LaunchConfiguration("launch_rtabmapviz")
 
     nav2_planner_arg = DeclareLaunchArgument(
         "nav2_planner",
@@ -141,24 +143,36 @@ def generate_launch_description():
         condition=IfCondition(use_rf2o),
     )
 
-    # ── 5. RTAB-Map SLAM  (delayed 6 s — waits for odom + /scan) ──────────
-    # Produces map → odom TF; this is the missing link that Nav2 requires.
-    # rtabmap.launch.py already handles the rtabmapviz conditional internally.
-    rtabmap_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_rover_localization, "launch", "rtabmap.launch.py")
-        ),
-        launch_arguments={
-            "use_sim_time":       "false",
-            "launch_rtabmapviz":  launch_rtabmapviz,
-        }.items(),
-        condition=IfCondition(use_rtabmap),
+    # ── 5. RTAB-Map SLAM — commented out (odometry-only mode) ────────────
+    # Re-enable once the base stack is confirmed working. Uncomment the args
+    # block above, this block, and swap the Nav2 delay back to 15s below.
+    #
+    # rtabmap_cmd = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(pkg_rover_localization, "launch", "rtabmap.launch.py")
+    #     ),
+    #     launch_arguments={
+    #         "use_sim_time":       "false",
+    #         "launch_rtabmapviz":  launch_rtabmapviz,
+    #     }.items(),
+    #     condition=IfCondition(use_rtabmap),
+    # )
+
+    # ── 5b. Static map → odom transform (odometry-only placeholder) ───────
+    # Tells Nav2 that map and odom are the same frame. The robot navigates
+    # purely on rf2o laser odometry with no drift correction. Fine for short
+    # missions; replace with RTAB-Map above for long/repeated runs.
+    static_map_odom_cmd = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        name="static_map_odom_publisher",
+        arguments=["0", "0", "0", "0", "0", "0", "map", "odom"],
+        parameters=[{"use_sim_time": False}],
     )
 
-    # ── 6. Nav2  (delayed 15 s — waits for map → odom TF from RTAB-Map) ───
-    # RTAB-Map needs a few seconds after startup before it publishes a stable
-    # map → odom transform. 15 s total (6 s rtabmap start + ~9 s settling)
-    # is conservative but reliable.  Tune down once the stack is proven.
+    # ── 6. Nav2  (delayed 8 s — rf2o needs to be stable, no RTAB-Map wait) ─
+    # rf2o starts at t=3s so 8s gives it 5s to produce a stable odom→base_link.
+    # Bump back to 15s when re-enabling RTAB-Map.
     navigation_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_rover_navigation, "launch", "bringup.launch.py")
@@ -170,20 +184,10 @@ def generate_launch_description():
         }.items(),
     )
 
-    joint_state_publisher_cmd = Node(
-    package="joint_state_publisher",
-    executable="joint_state_publisher",
-    name="joint_state_publisher",
-    parameters=[{"use_sim_time": False}],
-)
-
-
-
     # ── Build LaunchDescription ────────────────────────────────────────────
     ld = LaunchDescription()
 
     # Arguments
-    ld.add_action(joint_state_publisher_cmd)
     ld.add_action(use_lidar_arg)
     ld.add_action(use_robot_state_publisher_arg)
     ld.add_action(use_motor_controller_arg)
