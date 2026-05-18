@@ -63,5 +63,3 @@ def generate_launch_description():
         LogInfo(msg=["Using waypoints file: ", LaunchConfiguration("waypoints")]),
         waypoint_navigator_node,
     ])
-
-waypoint.navigator.py
