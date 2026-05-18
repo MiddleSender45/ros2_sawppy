@@ -1,0 +1,26 @@
+# Forest map waypoints
+# Coordinates are in the map frame (x, y, yaw_degrees)
+# Yaw: 0 = facing +X, 90 = facing +Y, -90 = facing -Y, 180 = facing -X
+
+waypoints:
+  - name: "wp_1"
+    x: 2.0
+    y: 0.0
+    yaw: 0.0
+
+  - name: "wp_2"
+    x: 6.0
+    y: 2.0
+    yaw: 90.0
+
+  - name: "wp_3"
+    x: 2.0
+    y: 6.0
+    yaw: 180.0
+
+  - name: "wp_4"
+    x: 6.0
+    y: 0.0
+    yaw: -90.0
+
+# Behaviour when final waypoint is reached: idle
